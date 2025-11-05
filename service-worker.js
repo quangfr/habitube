@@ -2,7 +2,9 @@ const CACHE_NAME = 'routine-buddy-v1';
 const OFFLINE_URLS = [
   './',
   './index.html',
-  './manifest.webmanifest'
+  './manifest.webmanifest',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', event => {
