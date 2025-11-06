@@ -717,52 +717,59 @@ const LANGUAGE_STRINGS={
   }
 }
 
-const CATEGORY_DEFS=[
-  {id:'Fitness', name:{en:'Fitness',fr:'Forme'}},
-  {id:'Nutrition', name:{en:'Nutrition',fr:'Nutrition'}},
-  {id:'Rest', name:{en:'Rest',fr:'Repos'}},
-  {id:'Connection', name:{en:'Connection',fr:'Lien social'}},
-  {id:'Learning', name:{en:'Learning',fr:'Apprentissages'}},
-  {id:'Leisure', name:{en:'Leisure',fr:'Loisirs'}},
-]
+const CATEGORY_DEFS = [
+  { id: 'Body', name: { en: 'Body', fr: 'Corps' } },
+  { id: 'Home', name: { en: 'Home', fr: 'Maison' } },
+  { id: 'Care', name: { en: 'Care', fr: 'Soin' } },
+  { id: 'Connect', name: { en: 'Connect', fr: 'Lien' } },
+  { id: 'Work', name: { en: 'Work', fr: 'Travail' } },
+  { id: 'Relax', name: { en: 'Relax', fr: 'Détente' } },
+];
 
-const SAMPLE_TASKS=[
-  {cat:'Fitness',emoji:'🤸',importance:'should',recur:{type:'daily'},title:{en:'5 min warm-up',fr:'Échauffement 5 min'}},
-  {cat:'Fitness',emoji:'🏃',importance:'must',recur:{type:'specific',days:[1,3,5]},title:{en:'20 min cardio',fr:'Cardio 20 min'}},
-  {cat:'Fitness',emoji:'💪',importance:'must',recur:{type:'specific',days:[2,4]},title:{en:'15 min strength',fr:'Renforcement 15 min'}},
-  {cat:'Fitness',emoji:'🧘',importance:'should',recur:{type:'daily'},title:{en:'Post-session stretches',fr:'Étirements après séance'}},
-  {cat:'Fitness',emoji:'🚲',importance:'should',recur:{type:'specific',days:[6]},title:{en:'Bike ride',fr:'Sortie vélo'}},
+const SAMPLE_TASKS = [
+  // 🏋️ Body
+  { cat: 'Body', emoji: '🏃', importance: 'must', recur: { type: 'specific', days: [1, 3, 5] }, title: { en: '20 min cardio', fr: 'Cardio 20 min' } },
+  { cat: 'Body', emoji: '🤸', importance: 'should', recur: { type: 'daily' }, title: { en: '5 min warm-up', fr: 'Échauffement 5 min' } },
+  { cat: 'Body', emoji: '💪', importance: 'must', recur: { type: 'specific', days: [2, 4] }, title: { en: '15 min strength', fr: 'Renforcement 15 min' } },
+  { cat: 'Body', emoji: '🧘', importance: 'should', recur: { type: 'daily' }, title: { en: 'Stretching routine', fr: 'Étirements' } },
+  { cat: 'Body', emoji: '🚲', importance: 'should', recur: { type: 'specific', days: [6] }, title: { en: 'Bike ride', fr: 'Sortie vélo' } },
 
-  {cat:'Nutrition',emoji:'🍳',importance:'must',recur:{type:'daily'},title:{en:'Protein breakfast',fr:'Petit-déj protéiné'}},
-  {cat:'Nutrition',emoji:'🍎',importance:'should',recur:{type:'daily'},title:{en:'2 fresh fruits',fr:'2 fruits frais'}},
-  {cat:'Nutrition',emoji:'💧',importance:'must',recur:{type:'daily'},title:{en:'Drink 1.5L water',fr:"Boire 1,5 L d'eau"}},
-  {cat:'Nutrition',emoji:'🥗',importance:'should',recur:{type:'specific',days:[1,4]},title:{en:'Veggie meal',fr:'Repas végétarien'}},
-  {cat:'Nutrition',emoji:'🐟',importance:'should',recur:{type:'specific',days:[5]},title:{en:'Fish meal',fr:'Repas de poisson'}},
+  // 🏠 Home
+  { cat: 'Home', emoji: '🧺', importance: 'should', recur: { type: 'specific', days: [6] }, title: { en: 'Do laundry', fr: 'Faire une lessive' } },
+  { cat: 'Home', emoji: '🧹', importance: 'must', recur: { type: 'specific', days: [0] }, title: { en: 'Clean apartment', fr: 'Nettoyer l’appartement' } },
+  { cat: 'Home', emoji: '🪴', importance: 'should', recur: { type: 'specific', days: [3] }, title: { en: 'Water plants', fr: 'Arroser les plantes' } },
+  { cat: 'Home', emoji: '🍳', importance: 'must', recur: { type: 'daily' }, title: { en: 'Cook a balanced meal', fr: 'Préparer un repas équilibré' } },
+  { cat: 'Home', emoji: '🧾', importance: 'should', recur: { type: 'weekly', times: 1 }, title: { en: 'Sort recycling', fr: 'Trier les déchets' } },
 
-  {cat:'Rest',emoji:'🛏️',importance:'must',recur:{type:'daily'},title:{en:'In bed before 11pm',fr:'Au lit avant 23h'}},
-  {cat:'Rest',emoji:'📵',importance:'should',recur:{type:'daily'},title:{en:'Screen off 1h before bed',fr:'Écran éteint 1h avant'}},
-  {cat:'Rest',emoji:'😴',importance:'should',recur:{type:'specific',days:[1,4]},title:{en:'20 min nap',fr:'Sieste 20 min'}},
-  {cat:'Rest',emoji:'🌬️',importance:'should',recur:{type:'specific',days:[2,5]},title:{en:'Calm breathing',fr:'Respiration calme'}},
-  {cat:'Rest',emoji:'🪟',importance:'should',recur:{type:'daily'},title:{en:'Air out bedroom',fr:'Aérer la chambre'}},
+  // 💆 Care
+  { cat: 'Care', emoji: '🛏️', importance: 'must', recur: { type: 'daily' }, title: { en: 'In bed before 11pm', fr: 'Au lit avant 23h' } },
+  { cat: 'Care', emoji: '💧', importance: 'must', recur: { type: 'daily' }, title: { en: 'Drink 1.5L water', fr: "Boire 1,5 L d’eau" } },
+  { cat: 'Care', emoji: '🌬️', importance: 'should', recur: { type: 'specific', days: [2, 5] }, title: { en: 'Breathing session', fr: 'Respiration calme' } },
+  { cat: 'Care', emoji: '🧴', importance: 'should', recur: { type: 'specific', days: [3] }, title: { en: 'Skin care', fr: 'Soin du visage' } },
+  { cat: 'Care', emoji: '😴', importance: 'should', recur: { type: 'specific', days: [1, 4] }, title: { en: '20 min nap', fr: 'Sieste 20 min' } },
 
-  {cat:'Connection',emoji:'💬',importance:'should',recur:{type:'specific',days:[2,4]},title:{en:'Message a loved one',fr:'Message à un proche'}},
-  {cat:'Connection',emoji:'📞',importance:'must',recur:{type:'weekly',times:1},title:{en:'Call family',fr:'Appeler la famille'}},
-  {cat:'Connection',emoji:'🍽️',importance:'should',recur:{type:'specific',days:[3]},title:{en:'Shared lunch',fr:'Déjeuner partagé'}},
-  {cat:'Connection',emoji:'🤝',importance:'should',recur:{type:'daily'},title:{en:'Give a sincere compliment',fr:'Faire un compliment sincère'}},
-  {cat:'Connection',emoji:'🕺',importance:'must',recur:{type:'specific',days:[5]},title:{en:'Social outing',fr:'Sortie sociale'}},
+  // 🤝 Connect
+  { cat: 'Connect', emoji: '💬', importance: 'should', recur: { type: 'specific', days: [2, 4] }, title: { en: 'Message a loved one', fr: 'Message à un proche' } },
+  { cat: 'Connect', emoji: '📞', importance: 'must', recur: { type: 'weekly', times: 1 }, title: { en: 'Call family', fr: 'Appeler la famille' } },
+  { cat: 'Connect', emoji: '🍽️', importance: 'should', recur: { type: 'specific', days: [3] }, title: { en: 'Shared meal', fr: 'Repas partagé' } },
+  { cat: 'Connect', emoji: '🤗', importance: 'should', recur: { type: 'daily' }, title: { en: 'Give a hug', fr: 'Faire un câlin' } },
+  { cat: 'Connect', emoji: '🕺', importance: 'must', recur: { type: 'specific', days: [5] }, title: { en: 'Social outing', fr: 'Sortie sociale' } },
 
-  {cat:'Learning',emoji:'📚',importance:'should',recur:{type:'daily'},title:{en:'Read for 15 min',fr:'Lire 15 min'}},
-  {cat:'Learning',emoji:'💻',importance:'must',recur:{type:'specific',days:[1,3]},title:{en:'Online course',fr:'Cours en ligne'}},
-  {cat:'Learning',emoji:'🗂️',importance:'should',recur:{type:'specific',days:[2,5]},title:{en:'Review vocabulary',fr:'Réviser le vocabulaire'}},
-  {cat:'Learning',emoji:'🗣️',importance:'should',recur:{type:'specific',days:[4]},title:{en:'Practice language',fr:'Pratiquer la langue'}},
-  {cat:'Learning',emoji:'📝',importance:'should',recur:{type:'weekly',times:1},title:{en:'Learning journal',fr:"Journal d'apprentissage"}},
+  // 💼 Work
+  { cat: 'Work', emoji: '🗓️', importance: 'must', recur: { type: 'daily' }, title: { en: 'Plan your day', fr: 'Planifier la journée' } },
+  { cat: 'Work', emoji: '📧', importance: 'should', recur: { type: 'specific', days: [1, 3, 5] }, title: { en: 'Inbox zero check', fr: 'Tri des mails' } },
+  { cat: 'Work', emoji: '🧠', importance: 'should', recur: { type: 'specific', days: [2, 4] }, title: { en: 'Learn something new', fr: 'Apprendre quelque chose de nouveau' } },
+  { cat: 'Work', emoji: '📊', importance: 'must', recur: { type: 'weekly', times: 1 }, title: { en: 'Review progress', fr: 'Faire le point sur les objectifs' } },
+  { cat: 'Work', emoji: '☕', importance: 'should', recur: { type: 'daily' }, title: { en: 'Take mindful break', fr: 'Pause consciente' } },
 
-  {cat:'Leisure',emoji:'🎨',importance:'should',recur:{type:'specific',days:[6]},title:{en:'Drawing session',fr:'Session dessin'}},
-  {cat:'Leisure',emoji:'🎸',importance:'should',recur:{type:'specific',days:[2,5]},title:{en:'Play music',fr:'Jouer de la musique'}},
-  {cat:'Leisure',emoji:'🎲',importance:'should',recur:{type:'specific',days:[5]},title:{en:'Game night',fr:'Soirée jeux'}},
-  {cat:'Leisure',emoji:'🌳',importance:'should',recur:{type:'specific',days:[6]},title:{en:'Nature outing',fr:'Sortie nature'}},
-  {cat:'Leisure',emoji:'📺',importance:'should',recur:{type:'daily'},title:{en:'Watch a show',fr:'Regarder une série'}},
-]
+  // 🌿 Relax
+  { cat: 'Relax', emoji: '🎧', importance: 'should', recur: { type: 'specific', days: [2, 5] }, title: { en: 'Listen to music', fr: 'Écouter de la musique' } },
+  { cat: 'Relax', emoji: '📺', importance: 'should', recur: { type: 'daily' }, title: { en: 'Watch a show', fr: 'Regarder une série' } },
+  { cat: 'Relax', emoji: '🕯️', importance: 'should', recur: { type: 'specific', days: [4] }, title: { en: 'Candle evening', fr: 'Soirée bougie' } },
+  { cat: 'Relax', emoji: '🛁', importance: 'should', recur: { type: 'specific', days: [6] }, title: { en: 'Take a relaxing bath', fr: 'Bain relaxant' } },
+  { cat: 'Relax', emoji: '🌳', importance: 'must', recur: { type: 'specific', days: [0] }, title: { en: 'Walk in nature', fr: 'Balade en nature' } },
+];
+
 
 function sanitizeLanguage(lang){ return lang==='fr' ? 'fr' : 'en' }
 function getStrings(lang){ return LANGUAGE_STRINGS[sanitizeLanguage(lang)] || LANGUAGE_STRINGS.en }
