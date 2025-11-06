@@ -1,7 +1,7 @@
 {
-  "name": "Routines",
-  "short_name": "Routines",
-  "description": "Track and reflect on routines across categories.",
+  "name": "Habitu.be - Your week, simplified",
+  "short_name": "Habitu.be",
+  "description": "See your progress, one week at a time.",
   "start_url": ".",
   "display": "standalone",
   "scope": ".",
