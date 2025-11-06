@@ -165,9 +165,9 @@ dialog form{display:flex;flex-direction:column;height:100%;min-height:0}
   <main>
     <section class="summary" id="summary">
       <div class="summary-status">
-        <span class="status-green">🟩<span id="pillGreen">0</span> On track</span>
-        <span class="status-yellow">🟨<span id="pillYellow">0</span> Keep up</span>
-        <span class="status-red">🟥<span id="pillRed">0</span> Catch up</span>
+        <span id="pillGreen">0</span><span class="status-green">🟩On track</span>
+        <span id="pillYellow">0</span><span class="status-yellow">🟨Keep up</span>
+        <span id="pillRed">0</span><span class="status-red">🟥Catch up</span>
       </div>
     </section>
 
@@ -278,11 +278,11 @@ const uid = ()=> Math.random().toString(36).slice(2,9)
 const WEEKDAY_SHORT = ['Mo','Tu','We','Th','Fr','Sa','Su']
 const WEEKDAY_ORDER = [1,2,3,4,5,6,0]
 const MOOD_CHOICES = [
-  {value:'😊', label:'Upbeat'},
-  {value:'😮‍💨', label:'Calm'},
+  {value:'😄', label:'Upbeat'},
+  {value:'😌', label:'Calm'},
   {value:'😤', label:'Driven'},
   {value:'😥', label:'Tired'},
-  {value:'😣', label:'Strained'},
+  {value:'😴', label:'Sleepy'},
 ]
 const STORE_KEY='ROUTINE_BUDDY_V3'
 const currentWeekStart = weekStart(todayISO())
