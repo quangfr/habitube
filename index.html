@@ -88,14 +88,14 @@
     <p id="languageDialogIntro">Select your preferred language to personalize the experience.</p>
     <div class="language-options">
       <button type="button" class="icon-btn" data-lang="en">English</button>
-      <button type="button" class="icon-btn" data-lang="fr">FranÃ§ais</button>
+      <button type="button" class="icon-btn" data-lang="fr">Français</button>
     </div>
   </div>
 </dialog>
 
 <dialog id="taskDialog">
   <form method="dialog" id="taskForm">
-    <div class="modal-head"><span id="dialogTitle">New activity</span><button type="button" class="icon-btn" id="closeDialog">âœ–</button></div>
+    <div class="modal-head"><span id="dialogTitle">New activity</span><button type="button" class="icon-btn" id="closeDialog">→</button></div>
     <div class="modal-body">
       <div class="field">
         <label for="f_title">Name</label>
@@ -108,8 +108,8 @@
       <div class="field">
         <label for="f_importance">Priority</label>
         <select id="f_importance">
-          <option value="must">ðŸŸ¥ Must</option>
-          <option value="should">ðŸŸ¨ Should</option>
+          <option value="must">🟥 Must</option>
+          <option value="should">🟨 Should</option>
         </select>
       </div>
       <div class="field">
@@ -192,7 +192,7 @@
       </div>
       <div class="field">
         <label for="f_emoji">Emoji</label>
-        <input type="text" id="f_emoji" placeholder="Ex: ðŸ˜" maxlength="3" />
+        <input type="text" id="f_emoji" placeholder="Ex: 🌱" maxlength="3" />
         <div class="emoji-picker">
           <input type="search" id="emojiSearch" placeholder="Search (fruit, workout, relax...)" />
           <div class="emoji-results" id="emojiResults"></div>
@@ -209,7 +209,7 @@
 
 <dialog id="categoryDialog">
   <form method="dialog" id="categoryForm">
-    <div class="modal-head"><span id="catDialogTitle">New category</span><button type="button" class="icon-btn" id="closeCategoryDialog">âœ–</button></div>
+    <div class="modal-head"><span id="catDialogTitle">New category</span><button type="button" class="icon-btn" id="closeCategoryDialog">→</button></div>
     <div class="modal-body">
       <div class="field">
         <label for="c_name">Name</label>
