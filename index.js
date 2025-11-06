@@ -1209,6 +1209,7 @@ function renderCategory(cat, week){
   save()
   const lang = currentLanguage()
   const strings = getStrings(lang)
+  const dayLabels = getWeekdayShortLabels(lang)
   const catEntry = categoryById(cat)
   if(els.catTitle){ els.catTitle.textContent = catEntry ? catEntry.name : categoryLabel(cat) }
   if(els.editCategoryBtn){
