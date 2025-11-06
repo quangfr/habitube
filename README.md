@@ -4,7 +4,7 @@ A playful, minimalist app to stay consistent with what truly matters — your da
 💾 100% free offline & private — no signup, no internet, just you.
 
 📅 **Weekly dashboard** — track 🟩🟨🟥 routine status at a glance.  
-💪 **Smart categories** — Body, Home, Care, Connect, Relax, Work with sample goals.  
+💪 **Smart categories** — 🏋️Body, 🏠Home, 💆Care, 🤝Connect, 🌿Relax, 💼Work with sample goals.  
 🎯 **Simple tracking** — tap days to mark done, focus on now.  
 ⚙️ **Fully yours** — add, edit, export anytime.  
 📲 **Install as an app** — Chrome → ⋮ → “Add to Home screen”.
