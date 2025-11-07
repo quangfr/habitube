@@ -41,8 +41,8 @@
   .card{border:1px solid var(--border); background:var(--card); border-radius:var(--r); box-shadow:var(--shadow);
         display:grid; grid-template-columns:1fr 64px; overflow:hidden; transition:outline .15s ease}
   .card.done{outline:3px solid var(--green)}
-  .content{padding:6px; display:flex; flex-direction:column; gap:4px}
-  .title{font-weight:700; display:flex; align-items:center; gap:8px; font-size:15px}
+  .content{padding:4px; display:flex; flex-direction:column; gap:2px}
+  .title{font-weight:700; display:flex; align-items:center; gap:4px; font-size:15px}
   .subtitle{color:#5b5b56; font-size:14px; min-height:18px}
   .friends{margin-top:auto; display:flex; gap:6px; align-items:center; flex-wrap:wrap}
   .badge{display:flex; align-items:center; gap:0px; padding:2px 4px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg); font-size:11px}
@@ -160,7 +160,7 @@
 
     <div class="tabs">
       <button class="tab active" data-tab="friends">👥 Amis</button>
-      <button class="tab" data-tab="progress">📈 Progression</button>
+      <button class="tab" data-tab="progress">📅 Historique</button>
     </div>
 
     <div class="section">
@@ -296,14 +296,15 @@ const CATS=[
   {id:'loisirs',emoji:'🎨',nom:'Loisirs'},
   {id:'repos',emoji:'😌',nom:'Repos'}
 ];
+/* ⇩⇩ Habitudes détaillées avec 1–2 mots fictifs en plus ⇩⇩ */
 const CHALLENGES=[
-  {id:'screenoff',cat:'sante',emoji:'📵',titre:'Écran coupé avant lit',levels:['10 min','30 min','1 h'],amis:['Anna','Ben','Chloé']},
-  {id:'repas',cat:'sante',emoji:'🥗',titre:'Repas sain',levels:['1 repas','2 repas','3 repas'],amis:['Ben','Duc']},
-  {id:'lire',cat:'esprit',emoji:'📖',titre:'Lire',levels:['5 min','15 min','30 min'],amis:['Chloé']},
-  {id:'etire',cat:'corps',emoji:'🤸',titre:'Étirements',levels:['3 min','10 min','20 min'],amis:['Anna']},
-  {id:'ranger',cat:'vie',emoji:'🧽',titre:'Rangement express',levels:['5 min','10 min','20 min'],amis:['Chloé']},
-  {id:'creer',cat:'loisirs',emoji:'🎸',titre:'Créer / Jouer',levels:['5 min','15 min','30 min'],amis:['Ben']},
-  {id:'respirer',cat:'repos',emoji:'🌬️',titre:'Respiration',levels:['2 min','5 min','10 min'],amis:['Anna']}
+  {id:'screenoff',cat:'sante',emoji:'🛌',titre:'Pas d écran avant le coucher',levels:['10 min','30 min','1 h'],amis:['Anna','Ben','Chloé','Marc','Marie']},
+  {id:'repas',cat:'sante',emoji:'🥗',titre:'Repas sain fait maison',levels:['1 repas','2 repas','3 repas'],amis:['Ben','Duc']},
+  {id:'lire',cat:'esprit',emoji:'📖',titre:'Lire un livre ou un roman',levels:['5 min','15 min','30 min'],amis:['Chloé']},
+  {id:'etire',cat:'corps',emoji:'🤸',titre:'Étirements corporels',levels:['3 min','10 min','20 min'],amis:['Anna','Marc']},
+  {id:'ranger',cat:'vie',emoji:'🧽',titre:'Rangement ou ménage',levels:['5 min','10 min','20 min'],amis:['Chloé']},
+  {id:'creer',cat:'loisirs',emoji:'🎸',titre:'Créer ou jouer',levels:['5 min','15 min','30 min'],amis:['Ben','Pauline']},
+  {id:'respirer',cat:'repos',emoji:'🌬️',titre:'Respiration avec cohérence cardiaque',levels:['2 min','5 min','10 min'],amis:['Anna','Marie']}
 ];
 const HOME_SELECTION=['screenoff','repas','lire','etire','ranger','creer','respirer'];
 
@@ -312,7 +313,7 @@ const levelTxt={0:'',1:'💧',2:'💧💧',3:'💧💧💧'};
 const levelPts={0:0,1:1,2:2,3:3};
 
 /* ======= Amis / événements (60 j) ======= */
-const FRIENDS=['Anna','Ben','Chloé','Duc'];
+const FRIENDS=['Anna','Ben','Chloé','Duc','Marc','Marie','Pauline'];
 const friendEvents={};
 (function seedFriendEvents(){
   const now=Date.now();
@@ -409,7 +410,7 @@ function renderCards(){
     // Contenu (à gauche)
     const cont=document.createElement('div'); cont.className='content';
     const title=document.createElement('div'); title.className='title';
-    title.innerHTML=`<span style="font-size:18px">${it.emoji}</span> <span>${it.titre}</span>`;
+    title.innerHTML=`<span style="font-size:30px">${it.emoji}</span> <span>${it.titre}</span>`;
     const sub=document.createElement('div'); sub.className='subtitle'; sub.textContent='';
 
     const friends=document.createElement('div'); friends.className='friends';
@@ -478,7 +479,7 @@ function renderCards(){
     card.addEventListener('click',(ev)=>{
       if(ev.target.closest('.levelBtn')) return;
       if(ev.target.closest('.friends')) return;
-      openDetail(it.id, btn, 'progress');
+      openDetail(it.id, btn, 'friends');
     });
 
     card.append(cont,col);
