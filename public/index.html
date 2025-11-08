@@ -3,13 +3,13 @@
 :root{--bg:#f7f3ea;--card:#fffdf8;--text:#1e1f1a;--green:#2a7a57;--border:#e6dfd2;--r:4px;--gap:8px;--fs:13px}
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;font:400 var(--fs)/1.35 system-ui,-apple-system,Roboto,sans-serif;color:var(--text);background:var(--bg)}
 #app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;position:relative}
-.heat{position:fixed;left:0;right:0;bottom:0;height:0;background:linear-gradient(0deg,#8ec5a8,transparent);opacity:.35;pointer-events:none;z-index:0}
+.heat{position:fixed;left:0;right:0;botJonas:0;height:0;background:linear-gradient(0deg,#8ec5a8,transparent);opacity:.35;pointer-events:none;z-index:0}
 button,.select,.tab,.stab,.btn,.btnToggle,.navbtn,.calBtn,.backMini{font:600 13px/1.2 system-ui,-apple-system,Roboto,sans-serif;padding:6px 10px;border-radius:var(--r);cursor:pointer;border:1px solid var(--border);background:var(--card)}
 .btn.primary{background:var(--green);color:#fff;border-color:transparent}.btn.danger{border-color:#d99;color:#600;background:#fff5f5}
 .btnToggle.active,.tab.active,.stab.active{outline:2px solid var(--green)}.select{appearance:none}
-.top{position:sticky;top:0;background:var(--bg);z-index:6;border-bottom:1px solid var(--border);padding:6px var(--gap);display:flex;align-items:center;gap:8px}
+.top{position:sticky;top:0;background:var(--bg);z-index:6;border-botJonas:1px solid var(--border);padding:6px var(--gap);display:flex;align-items:center;gap:8px}
 .brand{font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px}.brand .logo{font-size:18px}.spacer{flex:1}
-.daysWrap{position:sticky;top:44px;background:var(--bg);z-index:5;border-bottom:1px solid var(--border);padding:6px var(--gap);display:flex;align-items:center;gap:6px;justify-content:space-between}
+.daysWrap{position:sticky;top:44px;background:var(--bg);z-index:5;border-botJonas:1px solid var(--border);padding:6px var(--gap);display:flex;align-items:center;gap:6px;justify-content:space-between}
 .rightBtns{display:flex;flex-direction:row;gap:6px;align-items:flex-end}
 .dateLabel,.todayCount{font-weight:700;padding:0;border:none;background:transparent}
 .list{padding:var(--gap);display:grid;grid-template-columns:1fr;gap:var(--gap);position:relative;z-index:1}
@@ -22,18 +22,18 @@ button,.select,.tab,.stab,.btn,.btnToggle,.navbtn,.calBtn,.backMini{font:600 13p
 .levelCol{padding:0 6px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .levelBtn{width:100%;height:60px;border-radius:var(--r);border:1px solid var(--border);background:#f7f3ea;display:flex;flex-direction:column;align-items:center;justify-content:center;user-select:none;line-height:1.05;position:relative}
 .levelBtn .big{position:absolute;top:4px;left:0;right:0;text-align:center;font-size:22px;font-weight:800}
-.levelBtn .scoreText{position:absolute;bottom:2px;left:4px;right:4px;text-align:center;font-size:22px;font-weight:800;line-height:1}
+.levelBtn .scoreText{position:absolute;botJonas:2px;left:4px;right:4px;text-align:center;font-size:22px;font-weight:800;line-height:1}
 .section{padding:var(--gap)}
-.detailHead{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px var(--gap);border-bottom:1px solid var(--border)}
+.detailHead{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px var(--gap);border-botJonas:1px solid var(--border)}
 .detailTitle{font-weight:800;font-size:16px}
-.tabs{display:flex;gap:6px;padding:var(--gap);border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:80px;z-index:4}
+.tabs{display:flex;gap:6px;padding:var(--gap);border-botJonas:1px solid var(--border);background:var(--bg);position:sticky;top:80px;z-index:4}
 .tab{flex:1;text-align:center}.view{display:none}.view.active{display:block}
 .rankHeader{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
 .rank{display:grid;gap:8px;margin-top:8px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:6px;border:1px solid var(--border);background:var(--card);border-radius:var(--r)}
 .scoreEmoji{font-size:26px;font-weight:900;margin-left:4px;white-space:pre-line}
 .calendarWrap{padding:0 var(--gap) var(--gap)}
-.calTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.calTop{display:flex;align-items:center;justify-content:space-between;margin-botJonas:8px;gap:8px}
 .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .cell{height:55px;display:grid;place-items:center;border:1px dashed var(--border);background:var(--card);border-radius:var(--r);position:relative;overflow:hidden;cursor:pointer}
 .dayNum{position:absolute;top:4px;right:6px;font-size:10px;color:#777}
@@ -41,7 +41,7 @@ button,.select,.tab,.stab,.btn,.btnToggle,.navbtn,.calBtn,.backMini{font:600 13p
 .modal{position:fixed;inset:0;display:none;background:rgba(0,0,0,.2);padding:0;z-index:10}
 .modal.on{display:flex;align-items:stretch;justify-content:stretch}
 .sheet{position:absolute;inset:0;background:var(--card)}
-.sheetHeader{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px var(--gap);border-bottom:1px solid var(--border);background:var(--bg)}
+.sheetHeader{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px var(--gap);border-botJonas:1px solid var(--border);background:var(--bg)}
 .sheetBody{padding:var(--gap);height:calc(100% - 50px);overflow:auto}
 .grid{display:grid;gap:8px}
 .opt{border:1px solid var(--border);background:var(--card);border-radius:var(--r);padding:12px;display:flex;gap:8px;align-items:center;cursor:pointer}
@@ -49,7 +49,7 @@ button,.select,.tab,.stab,.btn,.btnToggle,.navbtn,.calBtn,.backMini{font:600 13p
 .field{display:grid;gap:4px}
 input[type="text"],textarea{padding:10px;border:1px solid var(--border);border-radius:var(--r);background:#fffdf8;font-size:13px}
 textarea{min-height:72px}
-.stabs{display:flex;gap:6px;padding:6px;position:sticky;top:52px;background:var(--bg);border-bottom:1px solid var(--border);z-index:2}
+.stabs{display:flex;gap:6px;padding:6px;position:sticky;top:52px;background:var(--bg);border-botJonas:1px solid var(--border);z-index:2}
 .stab{flex:1;text-align:center}
 .sview{display:none}.sview.active{display:block}
 .rowInline{display:flex;gap:8px;align-items:center}.rowInline input{flex:1}.rowInline .btn.copyOnly{padding:6px 10px}
@@ -107,7 +107,7 @@ textarea{min-height:72px}
               <div id="monthLabel" style="font-weight:700"></div>
               <button class="calBtn" id="nextMonth">→</button>
             </div>
-            <!-- ✅ maintenant visible aussi en espace individuel -->
+            <!-- visible aussi en individuel -->
             <div id="calWhoWrap" style="display:flex;gap:6px;align-items:center">
               <span style="font-size:12px">Voir :</span>
               <select id="calWho" class="select" style="padding:6px"></select>
@@ -119,7 +119,7 @@ textarea{min-height:72px}
       <div class="view" id="tab-settings">
         <div class="grid">
           <div class="field">
-            <label><b>Régularité</b> <span class="subtitle"></span></label>
+            <label><b>Régularité</b></label>
             <select id="freqSelect" class="select">
               <option value="1">Quotidien</option>
               <option value="2">Tous les 2 jours</option>
@@ -183,7 +183,7 @@ textarea{min-height:72px}
           </div>
           <div class="field"><label><b>Ton prénom</b></label><input id="spaceName" type="text" placeholder="Prénom"/></div>
           <div class="grid" style="grid-template-columns:1fr 1fr"><button class="btn" id="spaceCancel">Annuler</button><button class="btn primary" id="spaceSave">Rejoindre</button></div>
-          <div class="subtitle">Prototype : si tu crées un code, un mini-assistant te demande le type de profil.</div>
+          <div class="subtitle">Prototype : entre le code & ton prénom, puis choisis le type de profil.</div>
         </div>
       </div>
     </div>
@@ -191,7 +191,7 @@ textarea{min-height:72px}
 
   <div class="modal" id="modalWizard">
     <div class="sheet">
-      <div class="sheetHeader"><div id="wizTitle">Configurer l’espace</div><button class="closeX" id="closeWizard">⨉</button></div>
+      <div class="sheetHeader"><div id="wizTitle">Type de profil</div><button class="closeX" id="closeWizard">⨉</button></div>
       <div class="sheetBody"><div class="grid" id="wizStep"></div></div>
     </div>
   </div>
@@ -226,10 +226,10 @@ textarea{min-height:72px}
 
 <script>
 const CATS=[{id:'sante',emoji:'🩺',nom:'Santé'},{id:'relations',emoji:'🤝',nom:'Relations'},{id:'esprit',emoji:'🧠',nom:'Esprit'},{id:'corps',emoji:'💪',nom:'Corps'},{id:'vie',emoji:'🧺',nom:'Vie'},{id:'loisirs',emoji:'🎨',nom:'Loisirs'},{id:'repos',emoji:'😌',nom:'Repos'}];
-const CHALLENGES=[{type:'private',id:'screenoff',cat:'sante',emoji:'🛌',titre:'Sans écran avant le coucher',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'private',id:'repas',cat:'sante',emoji:'🥗',titre:'Repas sain fait maison',amis:['Ben','Duc']},{type:'private',id:'lire',cat:'esprit',emoji:'📖',titre:'Lire un livre ou un roman',amis:['Chloé']},{type:'private',id:'etire',cat:'corps',emoji:'🤸',titre:'Étirements corporels',amis:['Anna','Marc']},{type:'private',id:'ranger',cat:'vie',emoji:'🧽',titre:'Rangement ou ménage',amis:['Chloé']},{type:'private',id:'creer',cat:'loisirs',emoji:'🎸',titre:'Créer ou jouer',amis:['Ben','Pauline']},{type:'private',id:'respirer',cat:'repos',emoji:'🌬️',titre:'Respiration cohérence cardiaque',amis:['Anna','Marie']}];
-const GROUP_CHALLENGES=[{type:'group',id:'silence_matin',cat:'coloc',emoji:'🤫',titre:'Silence matinal',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'poubelles',cat:'coloc',emoji:'🗑️',titre:'Descendre les poubelles',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'cuisine',cat:'coloc',emoji:'🧽',titre:'Nettoyer la cuisine',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'communs',cat:'coloc',emoji:'🧺',titre:'Ranger les communs',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'apero_coloc',cat:'coloc',emoji:'🍝',titre:'Repas partagé',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'energie',cat:'coloc',emoji:'⚡',titre:'Économie d’énergie',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'wc_sdb',cat:'coloc',emoji:'🚽',titre:'Nettoyer WC & SDB',amis:['Anna','Ben','Chloé','Marc','Marie']},{type:'group',id:'silence_nuit',cat:'coloc',emoji:'🌙',titre:'Silence nocturne',amis:['Anna','Ben','Chloé','Marc','Marie']}];
-const FAMILY_CHALLENGES=[{type:'group',id:'planning_semaine',cat:'famille',emoji:'📅',titre:'Planning familial mis à jour',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'courses_pretes',cat:'famille',emoji:'🛒',titre:'Liste de courses faite ensemble',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'linge_plié',cat:'famille',emoji:'👕',titre:'Linge lavé, plié, rangé',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'repas_prevu',cat:'famille',emoji:'🍲',titre:'Menus de la semaine planifiés',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'rdv_prepares',cat:'famille',emoji:'📋',titre:'Rendez-vous & trajets anticipés',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'chambres_rangees',cat:'famille',emoji:'🧺',titre:'Pièces communes et chambres rangées',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'tri_recyclage',cat:'famille',emoji:'♻️',titre:'Tri sélectif & poubelles sorties',amis:['Maman','Papa','Léa','Tom']},{type:'group',id:'check_dimanche',cat:'famille',emoji:'🕒',titre:'Préparation de la semaine le dimanche',amis:['Maman','Papa','Léa','Tom']}];
-const CLASS_CHALLENGES=[{type:'group',id:'materiel_commun',cat:'classe',emoji:'📦',titre:'Matériel collectif en ordre',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'tableaux_prop',cat:'classe',emoji:'🧽',titre:'Tableau nettoyé en fin de cours',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'affiches',cat:'classe',emoji:'📜',titre:'Affichage clair et à jour',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'projets_planifies',cat:'classe',emoji:'🗂️',titre:'Projets ou exposés planifiés',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'materiel_partage',cat:'classe',emoji:'✏️',titre:'Outils partagés bien rangés',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'retard_groupe',cat:'classe',emoji:'⏰',titre:'Tous à l’heure au début du cours',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'bilan_vendredi',cat:'classe',emoji:'📊',titre:'Bilan collectif du vendredi fait',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']},{type:'group',id:'gestion_roles',cat:'classe',emoji:'🪑',titre:'Rôles (président, secrétaire...) répartis',amis:['M. Dupont','Emma','Lucas','Sarah','Yanis','Clara']}];
+const CHALLENGES=[{type:'private',id:'screenoff',cat:'sante',emoji:'🛌',titre:'Sans écran avant le coucher',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'private',id:'repas',cat:'sante',emoji:'🥗',titre:'Repas sain fait maison',amis:['Ben','Duc']},{type:'private',id:'lire',cat:'esprit',emoji:'📖',titre:'Lire un livre ou un roman',amis:['Chloé']},{type:'private',id:'etire',cat:'corps',emoji:'🤸',titre:'Étirements corporels',amis:['Anna','Nicolas']},{type:'private',id:'ranger',cat:'vie',emoji:'🧽',titre:'Rangement ou ménage',amis:['Chloé']},{type:'private',id:'creer',cat:'loisirs',emoji:'🎸',titre:'Créer ou jouer',amis:['Ben','Pauline']},{type:'private',id:'respirer',cat:'repos',emoji:'🌬️',titre:'Respiration cohérence cardiaque',amis:['Anna','Marie']}];
+const GROUP_CHALLENGES=[{type:'group',id:'silence_matin',cat:'coloc',emoji:'🤫',titre:'Silence matinal',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'poubelles',cat:'coloc',emoji:'🗑️',titre:'Descendre les poubelles',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'cuisine',cat:'coloc',emoji:'🧽',titre:'Nettoyer la cuisine',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'communs',cat:'coloc',emoji:'🧺',titre:'Ranger les communs',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'apero_coloc',cat:'coloc',emoji:'🍝',titre:'Repas partagé',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'energie',cat:'coloc',emoji:'⚡',titre:'Économie d’énergie',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'wc_sdb',cat:'coloc',emoji:'🚽',titre:'Nettoyer WC & SDB',amis:['Anna','Ben','Chloé','Nicolas','Marie']},{type:'group',id:'silence_nuit',cat:'coloc',emoji:'🌙',titre:'Silence nocturne',amis:['Anna','Ben','Chloé','Nicolas','Marie']}];
+const FAMILY_CHALLENGES=[{type:'group',id:'planning_semaine',cat:'famille',emoji:'📅',titre:'Planning familial mis à jour',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'courses_pretes',cat:'famille',emoji:'🛒',titre:'Liste de courses faite ensemble',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'linge_plié',cat:'famille',emoji:'👕',titre:'Linge lavé, plié, rangé',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'repas_prevu',cat:'famille',emoji:'🍲',titre:'Menus de la semaine planifiés',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'rdv_prepares',cat:'famille',emoji:'📋',titre:'Rendez-vous & trajets anticipés',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'chambres_rangees',cat:'famille',emoji:'🧺',titre:'Pièces communes et chambres rangées',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'tri_recyclage',cat:'famille',emoji:'♻️',titre:'Tri sélectif & poubelles sorties',amis:['Maman','Papa','David','Jonas']},{type:'group',id:'check_dimanche',cat:'famille',emoji:'🕒',titre:'Préparation de la semaine le dimanche',amis:['Maman','Papa','David','Jonas']}];
+const CLASS_CHALLENGES=[{type:'group',id:'materiel_commun',cat:'classe',emoji:'📦',titre:'Matériel collectif en ordre',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'tableaux_prop',cat:'classe',emoji:'🧽',titre:'Tableau nettoyé en fin de cours',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'affiches',cat:'classe',emoji:'📜',titre:'Affichage clair et à jour',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'projets_planifies',cat:'classe',emoji:'🗂️',titre:'Projets ou exposés planifiés',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'materiel_partage',cat:'classe',emoji:'✏️',titre:'Outils partagés bien rangés',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'retard_groupe',cat:'classe',emoji:'⏰',titre:'Tous à l’heure au début du cours',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'bilan_vendredi',cat:'classe',emoji:'📊',titre:'Bilan collectif du vendredi fait',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']},{type:'group',id:'gestion_roles',cat:'classe',emoji:'🪑',titre:'Rôles (président, secrétaire...) répartis',amis:['M. Dupont','Emma','Lucas','Lucie','Yanis','Clara']}];
 const OFFICE_CHALLENGES=[{type:'group',id:'planning_equipe',cat:'bureau',emoji:'📅',titre:'Planning d’équipe synchronisé',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'reunion_prete',cat:'bureau',emoji:'🗓️',titre:'Réunion préparée & documentée',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'projets_suivis',cat:'bureau',emoji:'📋',titre:'Suivi des projets mis à jour',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'stock_rangé',cat:'bureau',emoji:'📦',titre:'Matériel ou fournitures en ordre',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'postes_propres',cat:'bureau',emoji:'🧽',titre:'Bureaux et espace commun rangés',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'checkin_lundi',cat:'bureau',emoji:'🧭',titre:'Check-in collectif du lundi',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'docs_partages',cat:'bureau',emoji:'💾',titre:'Docs communs organisés et nommés',amis:['Alice','Bob','Carla','Dan']},{type:'group',id:'cloture_vendredi',cat:'bureau',emoji:'🕔',titre:'Clôture de la semaine en équipe',amis:['Alice','Bob','Carla','Dan']}];
 
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
@@ -243,22 +243,17 @@ function names(xs,m=3){if(xs.length<=m)return xs.join(', ');const s=xs.slice(0,m
 /* === Espace / état === */
 let period='30';
 const SPACES={'D0PWE3':{emoji:'👤',label:'👤 Individu',type:'private',ch:CHALLENGES,desc:'Espace personnel.'},'E8D3FS':{emoji:'🏠',label:'🏠 Colocation',type:'group',ch:GROUP_CHALLENGES,desc:'Espace partagé à la maison.'},'WS32D7':{emoji:'❤️',label:'❤️ Famille',type:'group',ch:FAMILY_CHALLENGES,desc:'Routines familiales au quotidien.'},'SR3S0D':{emoji:'🏫',label:'🏫 Classe',type:'group',ch:CLASS_CHALLENGES,desc:'Vie de classe et rituels pédagogiques.'},'PD03XZ':{emoji:'🏢',label:'🏢 Bureau',type:'group',ch:OFFICE_CHALLENGES,desc:'Rituels simples pour mieux travailler.'}};
-let spaceId='D0PWE3', userName='Moi', dayOff=0, genThis=false;
+let spaceId='D0PWE3', userName='Moi', dayOff=0;
 
 /* === Scores simulés === */
 const claps={};(()=>{const all=[...CHALLENGES,...GROUP_CHALLENGES,...FAMILY_CHALLENGES,...CLASS_CHALLENGES,...OFFICE_CHALLENGES];all.forEach(c=>{claps[c.id]={};[...new Set([...c.amis,'Moi'])].forEach(n=>claps[c.id][n]=Math.floor(Math.random()*101));});})();
 
-/* === Fréquences par habitude (1..5)
-   Individuel: 40% quotidien, sinon 2..5
-   Collectif: 60% quotidien, sinon 2 (<= 2 jours) === */
+/* === Fréquences (individuel 40% J1, collectif 60% J1 sinon J2) === */
 const FREQ={};
-function defaultFreqFor(h){
-  if(h.type==='group'){return Math.random()<0.6?1:2}
-  return Math.random()<0.4?1:rint(2,5);
-}
-[...CHALLENGES,...GROUP_CHALLENGES,...FAMILY_CHALLENGES,...CLASS_CHALLENGES,...OFFICE_CHALLENGES].forEach(h=>{FREQ[h.id]=FREQ[h.id]||defaultFreqFor(h)});
+function defaultFreqFor(h){return h.type==='group'?(Math.random()<0.6?1:2):(Math.random()<0.4?1:rint(2,5))}
+;[...CHALLENGES,...GROUP_CHALLENGES,...FAMILY_CHALLENGES,...CLASS_CHALLENGES,...OFFICE_CHALLENGES].forEach(h=>{FREQ[h.id]=FREQ[h.id]||defaultFreqFor(h)});
 
-/* === Visibilité déterministe par jour (25% masqué) === */
+/* === Visibilité (25% masqué) === */
 function daySerial(d){return Math.floor(d.getTime()/86400000)}
 function randDay(id,serial){let h=0;const s=id+':'+serial;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return (h%100)/100}
 function isVisibleToday(hid,d){const serial=daySerial(d);const f=FREQ[hid]||1;const due=(serial%f)===0;const hidden=(randDay(hid,serial)<0.25);return due && !hidden}
@@ -273,29 +268,20 @@ function findAny(id){return [...CHALLENGES,...GROUP_CHALLENGES,...FAMILY_CHALLEN
 function renderDateBar(){$("#dateLabel").textContent=fmtDate(curDate());const s=$$('#cards .levelBtn').map(b=>+b.dataset.doneToday||0).reduce((a,b)=>a+b,0);$("#todayCount").textContent=`🌱 ${s}`;}
 $("#prevDay").onclick=()=>{dayOff--;renderCards();renderDateBar()};$("#nextDay").onclick=()=>{dayOff++;renderCards();renderDateBar()};
 
-/* === Cartes (règles collectivisées pour tous les espaces) === */
+/* === Cartes === */
 let activeId=null, refBtn=null;
 function renderCards(){
-  const root=$("#cards");root.innerHTML='';
-  const d=curDate();
+  const root=$("#cards");root.innerHTML='';const d=curDate();
   listChallenges().forEach(it=>{
     if(!isVisibleToday(it.id,d)) return;
-
     const card=document.createElement('article');card.className='card';
     const cont=document.createElement('div');cont.className='content';
     const title=document.createElement('div');title.className='title';title.innerHTML=`<span style="font-size:24px">${it.emoji}</span><span class="base">${it.titre}</span><span class="hint" id="h-${it.id}"></span>`;
     const friends=document.createElement('div');friends.className='friends';
 
-    // Badges "collectif" partout
     let seedNames=[];
-    if(Math.random()<.5){
-      const n=rint(1,2);seedNames=[...it.amis].sort(()=>Math.random()-.5).slice(0,n);
-      const b=document.createElement('div');b.className='badge seed-badge';b.textContent=`🌱 ${names(seedNames)}`;friends.appendChild(b);
-    }
-    if(Math.random()<.7){
-      const n=rint(2,5),sun=[...it.amis].sort(()=>Math.random()-.5).slice(0,n);
-      const b=document.createElement('div');b.className='badge sun-badge';b.textContent=`🌞 ${names(sun)}`;friends.appendChild(b);
-    }
+    if(Math.random()<.5){const n=rint(1,2);seedNames=[...it.amis].sort(()=>Math.random()-.5).slice(0,n);const b=document.createElement('div');b.className='badge seed-badge';b.textContent=`🌱 ${names(seedNames)}`;friends.appendChild(b)}
+    if(Math.random()<.7){const n=rint(2,5),sun=[...it.amis].sort(()=>Math.random()-.5).slice(0,n);const b=document.createElement('div');b.className='badge sun-badge';b.textContent=`🌞 ${names(sun)}`;friends.appendChild(b)}
 
     cont.append(title,friends);
 
@@ -308,15 +294,8 @@ function renderCards(){
     const updSeed=()=>{const sb=friends.querySelector('.seed-badge');if(!sb)return;const nm=seedNames||[];if(!nm.length){sb.remove();return}sb.textContent=`🌱 ${names(nm)}`};
 
     const toggle=()=>{const done=btn.dataset.doneToday==='1', b=+btn.dataset.basePlants||0;
-      if(!done){
-        btn.dataset.doneToday='1';btn.dataset.plants=String(b+1);card.classList.add('done');
-        if(!seedNames.includes('Moi'))seedNames=['Moi',...seedNames];
-        if(!friends.querySelector('.seed-badge')){const sb=document.createElement('div');sb.className='badge seed-badge';friends.prepend(sb)}
-        updSeed();
-      }else{
-        btn.dataset.doneToday='0';btn.dataset.plants=String(b);card.classList.remove('done');
-        const i=seedNames.indexOf('Moi');if(i>-1)seedNames.splice(i,1);updSeed();
-      }
+      if(!done){btn.dataset.doneToday='1';btn.dataset.plants=String(b+1);card.classList.add('done');if(!seedNames.includes('Moi'))seedNames=['Moi',...seedNames];if(!friends.querySelector('.seed-badge')){const sb=document.createElement('div');sb.className='badge seed-badge';friends.prepend(sb)}updSeed();}
+      else{btn.dataset.doneToday='0';btn.dataset.plants=String(b);card.classList.remove('done');const i=seedNames.indexOf('Moi');if(i>-1)seedNames.splice(i,1);updSeed();}
       draw();renderDateBar();setHeat($$('.levelBtn').reduce((a,b)=>a+(b.dataset.doneToday==='1'?10:0),0));
     };
     col.onclick=toggle;cont.onclick=()=>openDetail(it.id,btn);
@@ -326,17 +305,12 @@ function renderCards(){
   renderDateBar();
 }
 
-/* ✅ Calendrier des amis visible aussi en individuel */
+/* Calendrier (amis visible aussi en individuel) */
 function populateCalWho(){
-  const wrap=$("#calWhoWrap"),sel=$("#calWho");wrap.style.display='flex';
-  sel.innerHTML='';
-  sel.add(new Option('Tous','__all__'));
-  sel.add(new Option('Moi','Moi'));
-  const fr=(findAny(activeId)?.amis||[]);
-  fr.forEach(n=>sel.add(new Option(n,n)));
-  sel.value='__all__';
+  const wrap=$("#calWhoWrap"),sel=$("#calWho");wrap.style.display='flex';sel.innerHTML='';
+  sel.add(new Option('Tous','__all__'));sel.add(new Option('Moi','Moi'));
+  (findAny(activeId)?.amis||[]).forEach(n=>sel.add(new Option(n,n)));sel.value='__all__';
 }
-
 function openDetail(id,btnRef){
   activeId=id;refBtn=btnRef;
   $("#home").classList.remove('active');$("#detail").classList.add('active');$("#daysWrap").style.display='none';
@@ -372,12 +346,8 @@ function minfo(off=0){const b=new Date();b.setDate(1);b.setMonth(b.getMonth()+of
 function renderCalendar(){
   const wrap=$("#cal");wrap.innerHTML='';const {y,m,fd,days}=minfo(calOff);const months=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];let monthSeeds=0;
   for(let i=0;i<fd;i++){const c=document.createElement('div');c.className='cell';c.style.opacity=.35;wrap.appendChild(c)}
-  const today=new Date(),sameMonth=(calOff===0);
-  const who=$("#calWho").value||'__all__';
-  let prob = (who==='__all__') ? .35 : .15; // cohérent pour individuel & collectif
-  for(let d=1;d<=days;d++){
-    const c=document.createElement('div');c.className='cell';
-    const dn=document.createElement('div');dn.className='dayNum';dn.textContent=String(d);c.appendChild(dn);
+  const today=new Date(),sameMonth=(calOff===0);const who=$("#calWho").value||'__all__';let prob=(who==='__all__')?.35:.15;
+  for(let d=1;d<=days;d++){const c=document.createElement('div');c.className='cell';const dn=document.createElement('div');dn.className='dayNum';dn.textContent=String(d);c.appendChild(dn);
     if(Math.random()<prob){const seed=document.createElement('div');seed.className='seedMark';seed.textContent='🌱';c.appendChild(seed);monthSeeds++}
     if(sameMonth&&d===today.getDate()){c.style.outline=`2px solid ${getComputedStyle(document.documentElement).getPropertyValue('--green')}`}
     c.onclick=()=>{const b=new Date();b.setDate(1);b.setMonth(b.getMonth()+calOff);const tgt=new Date(b.getFullYear(),b.getMonth(),d),now=new Date();now.setHours(0,0,0,0);dayOff=Math.round((tgt-now)/86400000);$("#detail").classList.remove('active');$("#home").classList.add('active');$("#daysWrap").style.display='flex';renderCards();renderDateBar();window.scrollTo({top:0,behavior:'smooth'})};
@@ -387,93 +357,76 @@ function renderCalendar(){
 }
 $("#prevMonth").onclick=()=>{calOff--;renderCalendar()};$("#nextMonth").onclick=()=>{calOff++;renderCalendar()};$("#calWho")?.addEventListener('change',renderCalendar);
 
-/* Tabs détail (incluant Paramètres) */
+/* Tabs & paramètres habitude */
 $$('.tab').forEach(t=>t.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const n=t.dataset.tab;$$('#detail .view').forEach(v=>v.classList.remove('active'));$('#tab-'+n).classList.add('active');if(n==='progress')renderCalendar();if(n==='settings')renderHabitSettings()}));
+function renderHabitSettings(){const sel=$("#freqSelect");if(!activeId||!sel)return;sel.value=String(FREQ[activeId]||1);sel.onchange=()=>{FREQ[activeId]=parseInt(sel.value||'1',10);renderCards();};}
 
-/* Onglet Paramètres d'une habitude */
-function renderHabitSettings(){
-  const sel=$("#freqSelect");if(!activeId||!sel)return;
-  sel.value=String(FREQ[activeId]||1);
-  sel.onchange=()=>{FREQ[activeId]=parseInt(sel.value||'1',10);renderCards();};
-}
-
+/* Modales */
 const mAdd=$("#modalAdd"),mHabit=$("#modalHabit"),mInvite=$("#modalInvite"),mSettings=$("#modalSettings"),mSpace=$("#modalSpace"),mWizard=$("#modalWizard");
 const open=m=>m.classList.add('on'), close=m=>m.classList.remove('on');
-
 $("#addBtn").onclick=()=>open(mAdd);$("#closeAdd").onclick=()=>close(mAdd);
 $("#addHabit").onclick=()=>{close(mAdd);open(mHabit);step1()};$("#inviteFriend").onclick=()=>{close(mAdd);openInvite()};$("#joinSpace").onclick=()=>{close(mAdd);open(mSpace)};
 function openInvite(){const code=spaceId;$("#inviteLink").value=`https://habitu.be/?code=${code}`;open(mInvite)}
 $("#closeInvite").onclick=()=>close(mInvite);
 $("#copyInvite").onclick=async()=>{try{await navigator.clipboard.writeText($("#inviteLink").value);alert("Lien copié !")}catch(e){alert("Copie impossible")}}
 
+/* Réglages espace */
 function switchS(id){$$('.stab').forEach(b=>b.classList.toggle('active',b.dataset.sview===id));$$('.sview').forEach(v=>v.classList.toggle('active',v.id===id))}
 $$('.stab').forEach(b=>b.onclick=()=>switchS(b.dataset.sview));
 $("#closeSettings").onclick=()=>{saveSettings();close(mSettings)};
-
-function saveSettings(){
-  const sp=getSpace();
-  sp.desc=$("#spaceDesc").value.trim();
-  userName=$("#paramName").value.trim()||'Moi';
-  const txt=$("#paramSpaceLabel").value.trim()||sp.label;
-  const hasEmoji=/^\p{Emoji}/u.test(txt);
-  sp.label=hasEmoji?txt:`${sp.emoji} ${txt}`;
-  updSel();updSettingsTitle();
-}
-
+function saveSettings(){const sp=getSpace();sp.desc=$("#spaceDesc").value.trim();userName=$("#paramName").value.trim()||'Moi';const txt=$("#paramSpaceLabel").value.trim()||sp.label;const hasEmoji=/^\p{Emoji}/u.test(txt);sp.label=hasEmoji?txt:`${sp.emoji} ${txt}`;updSel();updSettingsTitle();}
 $("#quitSpaceBtn").onclick=()=>{const sp=getSpace();if(confirm(`Quitter ${sp.label} (${spaceId}) ?`)){spaceId='D0PWE3';updSel();renderCards();close(mSettings)}};
-
-$("#settingsBtn").onclick=()=>{
-  const sp=getSpace();updSettingsTitle();$("#legendText").innerHTML=legend();$("#spaceDesc").value=sp.desc||'';$("#paramName").value=userName||'Moi';$("#paramSpaceLabel").value=sp.label;
+$("#settingsBtn").onclick=()=>{const sp=getSpace();updSettingsTitle();$("#legendText").innerHTML=legend();$("#spaceDesc").value=sp.desc||'';$("#paramName").value=userName||'Moi';$("#paramSpaceLabel").value=sp.label;
   $$('#modalSettings .btnToggle').forEach(b=>{b.classList.toggle('active',b.dataset.period===period);b.onclick=()=>{period=b.dataset.period;updPeriodBtns();renderRank()}})
   $("#quitSpaceBtn").textContent=`Quitter ${sp.label} (${spaceId})`;switchS('sinfo');open(mSettings);
 };
 function updSettingsTitle(){const sp=getSpace();$("#spaceHeaderTitle").textContent=`${sp.label} (${spaceId})`}
 
+/* Ajout habitude */
 let pickedCat=null;
 function step1(){const root=$("#step1");$("#step1").style.display='grid';$("#step2").style.display='none';root.innerHTML='';CATS.forEach(c=>{const el=document.createElement('div');el.className='opt';el.innerHTML=`<div class="emoji">${c.emoji}</div><div><b>${c.nom}</b></div>`;el.onclick=()=>{pickedCat=c.id;step2()};root.appendChild(el)})}
 function step2(){const root=$("#step2");$("#step1").style.display='none';$("#step2").style.display='grid';root.innerHTML='';CHALLENGES.filter(x=>x.cat===pickedCat).forEach(x=>{const el=document.createElement('div');el.className='opt';el.innerHTML=`<div class="emoji">${x.emoji}</div><div><b>${x.titre}</b></div>`;el.onclick=()=>{alert("Habitude ajoutée (démo)");close(mHabit)};root.appendChild(el)})}
 $("#closeHabit").onclick=()=>close(mHabit);
 
-$("#spaceGen").onclick=()=>{$("#spaceCode").value=genCode();genThis=true};$("#spaceCancel").onclick=()=>{close(mSpace);genThis=false};$("#closeSpace").onclick=()=>{close(mSpace);genThis=false};
-$("#spaceSave").onclick=()=>{
-  const code=($("#spaceCode").value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6), name=($("#spaceName").value||'').trim()||'Moi';
+/* Espace: code + prénom -> si code inconnu => assistant direct (sans cliquer Créer) */
+$("#spaceGen").onclick=()=>{$("#spaceCode").value=genCode()};
+$("#spaceCancel").onclick=()=>close(mSpace);$("#closeSpace").onclick=()=>close(mSpace);
+$("#spaceSave").onclick=()=>{const code=($("#spaceCode").value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6), name=($("#spaceName").value||'').trim()||'Moi';
   if(!code){alert("Entre un code d’espace.");return}
-  if(genThis){close(mSpace);launchWizard(code,name)}else{if(!SPACES[code])SPACES[code]={emoji:'👤',label:'👤 Individu',type:'private',ch:CHALLENGES,desc:''};spaceId=code;userName=name;updSel();renderCards();close(mSpace)}
-  genThis=false;
-};
+  if(SPACES[code]){spaceId=code;userName=name;updSel();renderCards();close(mSpace)}
+  else{close(mSpace);launchWizard(code,name)}};
 
-/* ✅ Assistant fusionné : une seule étape "Type de profil" */
+/* Assistant fusionné : Type de profil (avec descriptions) */
 let wiz={code:'',name:'',type:'private',profile:'Autre'};
 function launchWizard(code,name){wiz={code,name,type:'private',profile:'Autre'};open(mWizard);wizProfileStep()}
 function wizProfileStep(){
   $("#wizTitle").textContent="Type de profil";
   const root=$("#wizStep");root.innerHTML='';
   const options=[
-    {emoji:'👤',label:'Individu',apply:()=>({emoji:'👤',label:'👤 Individu',type:'private',ch:CHALLENGES,desc:'Espace personnel.'})},
-    {emoji:'🏠',label:'Colocation',apply:()=>({emoji:'🏠',label:'🏠 Colocation',type:'group',ch:GROUP_CHALLENGES,desc:'Espace partagé à la maison.'})},
-    {emoji:'❤️',label:'Famille',apply:()=>({emoji:'❤️',label:'❤️ Famille',type:'group',ch:FAMILY_CHALLENGES,desc:'Routines familiales au quotidien.'})},
-    {emoji:'🏫',label:'Classe',apply:()=>({emoji:'🏫',label:'🏫 Classe',type:'group',ch:CLASS_CHALLENGES,desc:'Vie de classe et rituels pédagogiques.'})},
-    {emoji:'🏢',label:'Bureau',apply:()=>({emoji:'🏢',label:'🏢 Bureau',type:'group',ch:OFFICE_CHALLENGES,desc:'Rituels simples pour mieux travailler.'})},
-    {emoji:'✨',label:'Autre',apply:()=>({emoji:'👥',label:'👥 Collectif',type:'group',ch:GROUP_CHALLENGES,desc:'Espace partagé.'})},
+    {emoji:'👤',label:'Individu',desc:'Espace personnel. Privé, orienté routines perso.',apply:()=>({emoji:'👤',label:'👤 Individu',type:'private',ch:CHALLENGES,desc:'Espace personnel.'})},
+    {emoji:'🏠',label:'Colocation',desc:'Espace partagé à la maison.',apply:()=>({emoji:'🏠',label:'🏠 Colocation',type:'group',ch:GROUP_CHALLENGES,desc:'Espace partagé à la maison.'})},
+    {emoji:'❤️',label:'Famille',desc:'Routines familiales au quotidien.',apply:()=>({emoji:'❤️',label:'❤️ Famille',type:'group',ch:FAMILY_CHALLENGES,desc:'Routines familiales au quotidien.'})},
+    {emoji:'🏫',label:'Classe',desc:'Vie de classe et rituels pédagogiques.',apply:()=>({emoji:'🏫',label:'🏫 Classe',type:'group',ch:CLASS_CHALLENGES,desc:'Vie de classe et rituels pédagogiques.'})},
+    {emoji:'🏢',label:'Bureau',desc:'Rituels simples pour mieux travailler.',apply:()=>({emoji:'🏢',label:'🏢 Bureau',type:'group',ch:OFFICE_CHALLENGES,desc:'Rituels simples pour mieux travailler.'})},
+    {emoji:'✨',label:'Autre',desc:'Espace partagé générique (libre).',apply:()=>({emoji:'✨',label:'✨ Autre',type:'group',ch:GROUP_CHALLENGES,desc:'Espace partagé.'})},
   ];
   options.forEach(o=>{
     const el=document.createElement('div');el.className='opt';
-    el.innerHTML=`<div class="emoji">${o.emoji}</div><div><b>${o.label}</b><div class="subtitle">Sélection rapide</div></div>`;
+    el.innerHTML=`<div class="emoji">${o.emoji}</div><div><b>${o.label}</b><div class="subtitle">${o.desc}</div></div>`;
     el.onclick=()=>{const d=o.apply();SPACES[wiz.code]=d;spaceId=wiz.code;userName=wiz.name;updSel();close(mWizard);renderCards();};
     root.appendChild(el);
   });
 }
 $("#closeWizard").onclick=()=>close(mWizard);
 
-function updSel(){
-  const sel=$("#spaceSel");sel.innerHTML='';
-  const order=['E8D3FS','D0PWE3','WS32D7','SR3S0D','PD03XZ'];
+/* Sélecteur d’espace */
+function updSel(){const sel=$("#spaceSel");sel.innerHTML='';const order=['E8D3FS','D0PWE3','WS32D7','SR3S0D','PD03XZ'];
   order.forEach(id=>{if(SPACES[id]){const o=document.createElement('option');o.value=id;o.textContent=`${SPACES[id].label} (${id})`;sel.appendChild(o)}})
   Object.keys(SPACES).forEach(id=>{if(!order.includes(id)){const o=document.createElement('option');o.value=id;o.textContent=`${SPACES[id].label} (${id})`;sel.appendChild(o)}})
-  sel.value=spaceId;
-}
+  sel.value=spaceId;}
 const sel=$("#spaceSel");sel.addEventListener('change',()=>{spaceId=sel.value;renderCards();if($("#detail").classList.contains('active')){$("#detail").classList.remove('active');$("#home").classList.add('active');$("#daysWrap").style.display='flex'}});
 
+/* Init */
 function renderCalendarAndKeepMonth(){renderCalendar()}
 let dayInit=false;function renderDateOnce(){if(!dayInit){dayOff=0;renderDateBar();dayInit=true}}
 renderCards();renderCalendarAndKeepMonth();renderDateOnce();updPeriodBtns();updSel();
