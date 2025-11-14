@@ -617,6 +617,37 @@
       justify-content: space-between
     }
 
+    .weekly-progress {
+      display: none;
+      gap: 4px;
+      align-items: center;
+      margin-top: -2px;
+      flex-wrap: wrap;
+    }
+
+    .weekly-progress__block {
+      width: 8px;
+      height: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f4e0c7;
+      transition: background .2s, border-color .2s;
+    }
+
+    .weekly-progress__block--done {
+      background: var(--green);
+      border-color: transparent;
+    }
+
+    .weekly-progress__block--active {
+      background: #f3c44a;
+      border-color: #f3c44a;
+    }
+
+    .weekly-progress__block--pending {
+      background: #f7f3ea;
+    }
+
     .title .left {
       display: flex;
       align-items: center;
@@ -1402,11 +1433,10 @@
             <div class="field">
               <label><b>Durée par défaut</b></label>
               <select id="mockDefaultDur" class="select">
-                <option>5 min</option>
-                <option>15 min</option>
-                <option>30 min</option>
-                <option>45 min</option>
-                <option>60 min</option>
+                <option value="15" selected>15 min</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
               </select>
             </div>
 
@@ -1711,6 +1741,7 @@
       'Coche plusieurs fois le jour pour suivre tes habitudes flexibles.',
       'Touche l’emoji pour découvrir la fiche détaillée de l’habitude.'
     ];
+    const DEFAULT_DURATION = 15;
     const TIP_ROTATION_MS = 3000;
     let tipRotationIndex = 0;
     let tipRotationTimer = null;
@@ -1790,43 +1821,127 @@
         .join(' ');
     }
 
+    const TAG_TRANSLATIONS = {
+      cleanliness: 'Propreté',
+      hygiene: 'Hygiène',
+      organization: 'Organisation',
+      organisation: 'Organisation',
+      cooperation: 'Coopération',
+      communication: 'Communication',
+      nutrition: 'Nutrition',
+      sleep: 'Sommeil',
+      calm: 'Calme',
+      comfort: 'Confort',
+      nature: 'Nature',
+      slowness: 'Lenteur',
+      expression: 'Expression',
+      affection: 'Affection',
+      joy: 'Joie',
+      participation: 'Participation',
+      curiosity: 'Curiosité',
+      inclusion: 'Inclusion',
+      equipment: 'Matériel',
+      privacy: 'Intimité',
+      entertainment: 'Divertissement',
+      home: 'Maison / Logement',
+      maison: 'Maison / Logement',
+      family: 'Famille / Couple',
+      famille: 'Famille / Couple',
+      school: 'Scolaire / Classe',
+      ecole: 'Scolaire / Classe',
+      work: 'Bureau / Projet',
+      bureau: 'Bureau / Projet',
+      event: 'Événement / Atelier',
+      social: 'Amis / Social',
+      amis: 'Amis / Social',
+      travel: 'Voyage / Déplacement',
+      voyage: 'Voyage / Déplacement',
+      club: 'Communauté / Club'
+    };
+
     const CONTEXT_EMOJIS = {
-      amis: '🤝',
-      anniversaire: '🎂',
-      association: '🏛️',
-      bureau: '💼',
-      camp: '🏕️',
-      colocation: '🏘️',
-      couple: '💑',
-      famille: '👨‍👩‍👧‍👦',
-      fête: '🎉',
-      gîte: '🏡',
+      home: '🏡',
       maison: '🏠',
+      family: '👨‍👩‍👧‍👦',
+      famille: '👨‍👩‍👧‍👦',
+      school: '🏫',
+      ecole: '🏫',
+      work: '🏢',
+      bureau: '🏢',
+      event: '🎪',
+      social: '🤝',
+      amis: '🤝',
+      travel: '✈️',
+      voyage: '🗺️',
+      club: '🏟️',
+      colocation: '🏘️',
+      camp: '🏕️',
+      fete: '🎉',
+      gite: '🏡',
       mariage: '💍',
-      sortie: '🧭',
-      voyage: '🌍',
-      école: '🏫'
+      sortie: '🧭'
     };
 
     const NEED_EMOJIS = {
-      Affection: '❤️',
-      Calme: '🕊️',
-      Expression: '🗣️',
-      Joie: '😄',
-      Lien: '🔗',
-      Mouvement: '🏃',
-      Organisation: '🗂️',
-      Sens: '🎯',
-      Sommeil: '😴',
-      Énergie: '⚡'
+      affection: '❤️',
+      joy: '😄',
+      joie: '😄',
+      calme: '🕊️',
+      calm: '🕊️',
+      nature: '🌿',
+      nutrition: '🍎',
+      organization: '🗂️',
+      organisation: '🗂️',
+      movement: '🏃',
+      mouvement: '🏃',
+      lien: '🔗',
+      sens: '🎯',
+      energie: '⚡',
+      energy: '⚡',
+      expression: '🗣️',
+      communication: '🗣️',
+      cooperation: '🤝',
+      participation: '🙌',
+      curiosity: '🔍',
+      curiosite: '🔍',
+      inclusion: '🌈',
+      equipment: '🧰',
+      comfort: '🛋️',
+      sleep: '😴',
+      sommeil: '😴',
+      entertainment: '🎭',
+      cleaning: '🧽',
+      cleanliness: '🧼',
+      hygiene: '🧼',
+      privacy: '🛡️',
+      intimite: '🛡️',
+      slowness: '🐢',
+      lenteur: '🐢'
     };
 
-    function formatTagLabel(tag, type) {
-      const base = prettifyTag(tag);
-      if (!type) return base;
+    function normalizeTagKey(tag) {
+      if (!tag) return '';
+      const value = tag.toString();
+      const normalized = value.normalize ? value.normalize('NFD') : value;
+      return normalized.replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    }
+
+    function translateTag(tag) {
+      const key = normalizeTagKey(tag);
+      return TAG_TRANSLATIONS[key] || prettifyTag(tag);
+    }
+
+    function getTagEmoji(tag, type) {
+      if (!type) return '';
+      const key = normalizeTagKey(tag);
       const emojiMap = type === 'context' ? CONTEXT_EMOJIS : type === 'need' ? NEED_EMOJIS : null;
-      const emoji = emojiMap?.[tag] || '';
-      return emoji ? `${emoji} ${base}` : base;
+      return emojiMap?.[key] || '';
+    }
+
+    function formatTagLabel(tag, type) {
+      const label = translateTag(tag);
+      const emoji = getTagEmoji(tag, type);
+      return emoji ? `${emoji} ${label}` : label;
     }
     const SESSION_LOCK_KEY = 'habitu-primary-tab';
     const SESSION_LOCK_TTL = 15 * 1000;
@@ -2098,6 +2213,19 @@
       const candidate = (email || '').trim();
       return candidate.includes('@') ? candidate.split('@')[0] : candidate;
     }
+    function getCurrentOwnerLabel() {
+      const candidate = (userName || '').trim();
+      return candidate || 'Moi';
+    }
+    function normalizeOwnerLabel(label) {
+      return ((label || '').trim() || '').toLowerCase();
+    }
+    function isCurrentUserLabel(label) {
+      const normalized = normalizeOwnerLabel(label);
+      if (!normalized) return false;
+      const canonical = normalizeOwnerLabel(getCurrentOwnerLabel());
+      return normalized === canonical || normalized === 'moi';
+    }
     function timestampToDate(value) {
       if (!value) return null;
       if (value?.toDate) return value.toDate();
@@ -2328,13 +2456,13 @@
           const descText = (habit.note || habit.desc || '').trim();
           const candidateDuration = habit.baseMin ?? habit.duration;
           const parsedDuration = Number(candidateDuration);
-          const baseMinVal = Number.isFinite(parsedDuration) ? parsedDuration : undefined;
+          const baseMinVal = Number.isFinite(parsedDuration) ? Math.max(DEFAULT_DURATION, parsedDuration) : DEFAULT_DURATION;
           LIBRARY_HABITS.push({
             id,
             ...habit,
             desc: descText,
             titre: habit.titre || habit.title || '',
-            baseMin: baseMinVal ?? habit.baseMin
+            baseMin: baseMinVal
           });
         });
       }
@@ -2382,11 +2510,11 @@
       if (st === 0) {
         if (modeType === 'commun') card.classList.add('s0shared'); else card.classList.add('s0');
       } else if (st === 1) {
-        if (owner === 'Moi') card.classList.add('s1me');
+        if (isCurrentUserLabel(owner)) card.classList.add('s1me');
         else if (helping) card.classList.add('s1help');
         else card.classList.add('s1other');
       } else if (st === 2) {
-        if (owner === 'Moi') card.classList.add('s2me');
+        if (isCurrentUserLabel(owner)) card.classList.add('s2me');
         else card.classList.add('s2other');
       }
     }
@@ -2430,17 +2558,24 @@
         badges.appendChild(b);
         b.addEventListener('click', (e) => {
           e.stopPropagation();
-          const arr = JSON.parse(btnRef.dataset.heartList || '[]');
-          const meIdx = arr.indexOf('Moi');
-          if (meIdx >= 0) arr.splice(meIdx, 1); else arr.unshift('Moi');
-          btnRef.dataset.heartList = JSON.stringify(arr);
-          b.textContent = `❤️ ${arr.length ? arr.join(', ') : ' '}`;
-          b.classList.toggle('liked', arr.includes('Moi'));
-          scheduleHabitActivity(habitId, { type: 'like', liked: arr.includes('Moi'), recipients: arr });
+          const list = JSON.parse(btnRef.dataset.heartList || '[]');
+          const canonicalName = getCurrentOwnerLabel();
+          let updated;
+          const currentlyLiked = list.some(isCurrentUserLabel);
+          if (currentlyLiked) {
+            updated = list.filter(name => !isCurrentUserLabel(name));
+          } else {
+            updated = [canonicalName, ...list.filter(name => !isCurrentUserLabel(name))];
+          }
+          btnRef.dataset.heartList = JSON.stringify(updated);
+          const liked = updated.some(isCurrentUserLabel);
+          b.textContent = `❤️ ${updated.length ? updated.join(', ') : ' '}`;
+          b.classList.toggle('liked', liked);
+          scheduleHabitActivity(habitId, { type: 'like', liked, recipients: updated });
         });
       }
       b.textContent = `❤️ ${namesList.length ? namesList.join(', ') : ' '}`;
-      b.classList.toggle('liked', namesList.includes('Moi'));
+      b.classList.toggle('liked', namesList.some(isCurrentUserLabel));
     }
 
     /* Tag "Individuel" — supprimé */
@@ -2676,7 +2811,9 @@
         const friendsBadges = document.createElement('div');
         friendsBadges.className = 'friends-badges';
         friends.appendChild(friendsBadges);
-        cont.append(title, desc, friends);
+        const progressRow = document.createElement('div');
+        progressRow.className = 'weekly-progress';
+        cont.append(title, progressRow, desc, friends);
 
         const col = document.createElement('div');
         col.className = 'levelCol';
@@ -2686,13 +2823,26 @@
         btn.dataset.habitEmoji = it.emoji || '🌱';
 
         const records = getHabitRecords(spaceId, it.id, today);
-        const record = records.find(r => r.owner === 'Moi') || records[0] || null;
+        const freqWeekly = HABIT_REC[it.id] || 1;
+        let userRecord = records.find(r => isCurrentUserLabel(r.owner)) || null;
+        let ownerRecord = records[0] || null;
+        const ownerFreq = Math.max(1, Number(ownerRecord?.frequency ?? freqWeekly));
+        const ownerModeType = ownerRecord?.modeType || mode.type;
+        const resetProgress = (isWeekMode() && ownerRecord && ownerFreq !== freqWeekly) || (ownerRecord && ownerModeType !== mode.type);
+        if (resetProgress) {
+          ownerRecord = null;
+          userRecord = null;
+        }
         const baseMin = BASE_MINUTES[it.id] || 15;
-        const state = record?.state ?? 0;
-        const owner = state > 0 ? (record?.owner || '') : '';
-        const helpers = state > 0 ? (record?.helpers || []) : [];
-        const helping = state > 0 && record?.helping ? '1' : '0';
-        const countValue = isWeekMode() ? ((record?.count ?? HABIT_REC[it.id]) || 1) : 0;
+        const ownerState = ownerRecord?.state ?? 0;
+        const owner = ownerState > 0 ? (ownerRecord?.owner || '') : '';
+        const helpers = ownerState > 0 ? (ownerRecord?.helpers || []) : [];
+        const helping = ownerState > 0 && ownerRecord?.helping ? '1' : '0';
+        const userState = userRecord?.state ?? 0;
+        const storedCount = Number(userRecord?.count ?? 0) || 0;
+        const computedCount = storedCount || (userState === 2 ? freqWeekly + 1 : 0);
+        const countValue = isWeekMode() ? Math.min(Math.max(computedCount, 0), freqWeekly + 1) : 0;
+        const state = userState;
         const vipList = getLikeListForHabit(it.id);
         btn.dataset.state = String(state);
         btn.dataset.owner = owner;
@@ -2700,7 +2850,7 @@
         btn.dataset.helpers = JSON.stringify(helpers);
         btn.dataset.count = state === 0 ? '0' : String(countValue);
         btn.dataset.baseMin = String(baseMin);
-        btn.dataset.recur = String(HABIT_REC[it.id] || 1);
+        btn.dataset.recur = String(freqWeekly);
         btn.dataset.week = isWeekMode() ? '1' : '0';
         btn.dataset.basePlants = String(state >= 1 ? baseMin : 0);
         btn.dataset.plants = btn.dataset.basePlants;
@@ -2712,7 +2862,7 @@
           const ownerNow = btn.dataset.owner || '';
           const helpingNow = btn.dataset.helping === '1';
           applyCardClass(card, stNow, ownerNow, helpingNow, (HABIT_MODE[it.id] || { type: 'libre' }).type);
-          baseEl.classList.toggle('strike', stNow === 2 && ownerNow === 'Moi');
+          baseEl.classList.toggle('strike', stNow === 2 && isCurrentUserLabel(ownerNow));
           ensureModeTag();
         };
 
@@ -2720,7 +2870,7 @@
           const stNow = +btn.dataset.state || 0;
           const ownerNow = btn.dataset.owner || '';
           const helpingNow = btn.dataset.helping === '1';
-          const shouldShowOwner = (mode.type === 'commun') ? ((stNow === 1 || stNow === 2) ? ownerNow : '') : (stNow >= 1 ? 'Moi' : '');
+          const shouldShowOwner = (mode.type === 'commun') ? ((stNow === 1 || stNow === 2) ? ownerNow : '') : (stNow >= 1 ? getCurrentOwnerLabel() : '');
           ensureOwnerBadge(friendsBadges, shouldShowOwner, it, btn);
           const showHelpers = mode.type === 'commun' && stNow === 2;
           if (showHelpers) {
@@ -2729,9 +2879,35 @@
           } else {
             ensureHelperBadge(friendsBadges, []);
           }
-          const shouldHeart = (stNow === 1) || (stNow === 2 && ownerNow !== 'Moi');
+          const ownerIsMe = isCurrentUserLabel(ownerNow);
+          const shouldHeart = (stNow === 1 && !ownerIsMe) || (stNow === 2 && !ownerIsMe);
           const arr = JSON.parse(btn.dataset.heartList || '[]');
           ensureHeartBadge(friendsBadges, shouldHeart, arr, btn, it.id);
+        };
+
+        const renderWeeklyProgress = () => {
+          const isWeek = btn.dataset.week === '1';
+          const recur = Math.max(1, +btn.dataset.recur || 1);
+          const shouldShow = isWeek && recur > 1;
+          progressRow.style.display = shouldShow ? 'flex' : 'none';
+          progressRow.innerHTML = '';
+          if (!shouldShow) return;
+          const totalBlocks = recur + 1;
+          const stateNow = +btn.dataset.state || 0;
+          const count = Math.max(0, Math.min(totalBlocks, +btn.dataset.count || 0));
+          const activeIndex = stateNow === 1 && count < totalBlocks ? count + 1 : -1;
+          for (let i = 1; i <= totalBlocks; i++) {
+            const block = document.createElement('span');
+            block.className = 'weekly-progress__block';
+            if (i <= count) {
+              block.classList.add('weekly-progress__block--done');
+            } else if (i === activeIndex) {
+              block.classList.add('weekly-progress__block--active');
+            } else {
+              block.classList.add('weekly-progress__block--pending');
+            }
+            progressRow.appendChild(block);
+          }
         };
 
         const ensureOpenDesc = () => {
@@ -2777,27 +2953,38 @@
             btn.dataset.count = '0';
           }
           if (nst >= 1 && !btn.dataset.owner) {
-            btn.dataset.owner = 'Moi';
+            btn.dataset.owner = getCurrentOwnerLabel();
           }
           drawBtn(btn);
           setVisualFromState(nst);
           renderBadges();
-          scheduleHabitActivity(it.id, { type: 'realization', state: nst, owner: btn.dataset.owner, helping: btn.dataset.helping === '1' });
+          renderWeeklyProgress();
+          scheduleHabitActivity(it.id, {
+            type: 'realization',
+            state: nst,
+            owner: btn.dataset.owner,
+            helping: btn.dataset.helping === '1',
+            count: +btn.dataset.count || 0,
+            frequency: freqWeekly,
+            modeType: mode.type
+          });
           renderDateBar();
         };
 
         const clickWeekly = () => {
           let st = +btn.dataset.state || 0;
           let count = +btn.dataset.count || 0;
-          const R = +btn.dataset.recur || 1;
+          const R = Math.max(1, +btn.dataset.recur || 1);
+          const total = R + 1;
           if (st === 0) {
             st = 1;
             count = 1;
-            btn.dataset.owner = 'Moi';
+            btn.dataset.owner = getCurrentOwnerLabel();
           } else if (st === 1) {
             if (count < R) {
               count++;
-            } else {
+            } else if (count === R) {
+              count = total;
               st = 2;
             }
           } else if (st === 2) {
@@ -2814,21 +3001,21 @@
           const st = +btn.dataset.state || 0;
           const ownerNow = btn.dataset.owner || '';
           if (st === 0) {
-            btn.dataset.owner = 'Moi';
+            btn.dataset.owner = getCurrentOwnerLabel();
             applyState(1);
             return;
           }
           if (st === 1) {
-            if (ownerNow === 'Moi') {
+            if (isCurrentUserLabel(ownerNow)) {
               applyState(2, { keepOwner: true });
             } else {
               const helping = btn.dataset.helping === '1';
               btn.dataset.helping = helping ? '0' : '1';
               let hs = JSON.parse(btn.dataset.helpers || '[]');
               if (helping) {
-                hs = hs.filter(n => n !== 'Moi');
+                hs = hs.filter(n => !isCurrentUserLabel(n));
               } else {
-                if (!hs.includes('Moi')) hs.push('Moi');
+                if (!hs.some(isCurrentUserLabel)) hs.push(getCurrentOwnerLabel());
               }
               btn.dataset.helpers = JSON.stringify(hs);
               drawBtn(btn);
@@ -2840,7 +3027,7 @@
             return;
           }
           if (st === 2) {
-            if (ownerNow === 'Moi') {
+            if (isCurrentUserLabel(ownerNow)) {
               applyState(0);
             }
             return;
@@ -2851,7 +3038,7 @@
           if (isWeekMode()) { clickWeekly(); return; }
           const st = +btn.dataset.state || 0;
           if (st === 0) {
-            btn.dataset.owner = 'Moi';
+            btn.dataset.owner = getCurrentOwnerLabel();
             applyState(2);
             return;
           }
@@ -2868,6 +3055,7 @@
         drawBtn(btn);
         setVisualFromState(state);
         renderBadges();
+        renderWeeklyProgress();
         const manageEditButton = () => {
           const enabled = shouldShowEditButton();
           const existing = friends.querySelector('.card-edit');
@@ -3121,13 +3309,8 @@
       if (defaultDurSel && !defaultDurSel.dataset.bound) {
         defaultDurSel.dataset.bound = '1';
         defaultDurSel.addEventListener('change', () => {
-          const v = defaultDurSel.value.trim();
-          let mins = 15;
-          if (v.startsWith('5 ')) mins = 5;
-          else if (v.startsWith('15')) mins = 15;
-          else if (v.startsWith('30')) mins = 30;
-          else if (v.startsWith('45')) mins = 45;
-          else if (v.startsWith('60')) mins = 60;
+          const selected = Number(defaultDurSel.value);
+          const mins = Number.isFinite(selected) && selected > 0 ? selected : DEFAULT_DURATION;
           BASE_MINUTES[activeId] = mins;
           renderCards();
         });
