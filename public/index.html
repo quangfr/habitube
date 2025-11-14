@@ -2021,7 +2021,7 @@
         const owner = state > 0 ? (record?.owner || '') : '';
         const helpers = state > 0 ? (record?.helpers || []) : [];
         const helping = state > 0 && record?.helping ? '1' : '0';
-        const countValue = isWeekMode() ? (record?.count ?? HABIT_REC[it.id] || 1) : 0;
+        const countValue = isWeekMode() ? ((record?.count ?? HABIT_REC[it.id]) || 1) : 0;
         const vipList = getLikeListForHabit(it.id);
         btn.dataset.state = String(state);
         btn.dataset.owner = owner;
