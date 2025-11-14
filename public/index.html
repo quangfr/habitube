@@ -779,24 +779,13 @@
     }
 
     .levelBtn .big {
-      position: absolute;
-      top: 4px;
-      left: 0;
-      right: 0;
+      font-size: 28px;
+      font-weight: 800;
       text-align: center;
-      font-size: 22px;
-      font-weight: 800
     }
 
     .levelBtn .scoreText {
-      position: absolute;
-      bottom: 2px;
-      left: 4px;
-      right: 4px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 800;
-      line-height: 1
+      display: none;
     }
 
     .freq-sub-jours {
@@ -981,6 +970,11 @@
       background: var(--bg)
     }
 
+    .closeX.locked {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
     .sheetBody {
       padding: var(--gap);
       height: calc(100% - 50px);
@@ -1031,7 +1025,7 @@
     .tag {
       border: 1px solid var(--border);
       background: #fffdf8;
-      border-radius: 999px;
+      border-radius: 4px;
       padding: 6px 10px;
       cursor: pointer;
       font-size: 12px;
@@ -1082,6 +1076,20 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       margin-top: 12px;
+    }
+
+    .habit-actions.footer-sticky {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      flex-wrap: wrap;
+      padding: 10px var(--gap);
+      margin-top: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      z-index: 2;
+      justify-content: space-between;
     }
 
     .opt {
@@ -1781,6 +1789,45 @@
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
     }
+
+    const CONTEXT_EMOJIS = {
+      amis: '🤝',
+      anniversaire: '🎂',
+      association: '🏛️',
+      bureau: '💼',
+      camp: '🏕️',
+      colocation: '🏘️',
+      couple: '💑',
+      famille: '👨‍👩‍👧‍👦',
+      fête: '🎉',
+      gîte: '🏡',
+      maison: '🏠',
+      mariage: '💍',
+      sortie: '🧭',
+      voyage: '🌍',
+      école: '🏫'
+    };
+
+    const NEED_EMOJIS = {
+      Affection: '❤️',
+      Calme: '🕊️',
+      Expression: '🗣️',
+      Joie: '😄',
+      Lien: '🔗',
+      Mouvement: '🏃',
+      Organisation: '🗂️',
+      Sens: '🎯',
+      Sommeil: '😴',
+      Énergie: '⚡'
+    };
+
+    function formatTagLabel(tag, type) {
+      const base = prettifyTag(tag);
+      if (!type) return base;
+      const emojiMap = type === 'context' ? CONTEXT_EMOJIS : type === 'need' ? NEED_EMOJIS : null;
+      const emoji = emojiMap?.[tag] || '';
+      return emoji ? `${emoji} ${base}` : base;
+    }
     const SESSION_LOCK_KEY = 'habitu-primary-tab';
     const SESSION_LOCK_TTL = 15 * 1000;
     const SESSION_LOCK_PING = 4 * 1000;
@@ -2033,6 +2080,7 @@
       clearObject(FREQ_MODE);
       DELETED_HABITS.clear();
       allowedSpaces = [];
+      syncGardenCloseButtonState();
       Object.keys(SPACE_ACTIVITIES).forEach(k => delete SPACE_ACTIVITIES[k]);
       Object.keys(INVITE_CACHE).forEach(k => delete INVITE_CACHE[k]);
       Object.keys(SPACES).forEach(k => delete SPACES[k]);
@@ -2530,28 +2578,13 @@
     /* Emojis & bouton */
     function currentBigEmoji(btn, tot) { return btn.dataset.override || (tot <= 7 ? '🌰' : tot <= 14 ? '🌱' : tot <= 21 ? '🍀' : tot <= 28 ? '🌼' : tot <= 35 ? '🌻' : tot <= 42 ? '🌷' : tot <= 49 ? '🌹' : tot <= 56 ? '🪻' : tot <= 64 ? '💐' : '🎋'); }
     function drawBtn(btn) {
-      const p = +btn.dataset.plants || 0, s = +btn.dataset.suns || 0, tot = p + s;
-      const st = +btn.dataset.state || 0, base = +btn.dataset.baseMin || 0;
-      const helping = btn.dataset.helping === '1';
-      const isWeek = btn.dataset.week === '1';
-      const R = +btn.dataset.recur || 1;
-      const count = +btn.dataset.count || 0;
-      const owner = btn.dataset.owner || '';
-      let val = '';
-
-      if (st === 0) {
-        const durationLabel = base ? `${base} mn` : '0 mn';
-        val = durationLabel;
-      } else if (st === 1) {
-        val = owner || 'En cours';
-      } else if (st === 2) {
-        val = isWeek ? `Fait` : 'Fait';
-      } else {
-        val = m2txtShort(base);
-      }
+      const p = +btn.dataset.plants || 0;
+      const s = +btn.dataset.suns || 0;
+      const tot = p + s;
+      const st = +btn.dataset.state || 0;
       const habitEmoji = btn.dataset.habitEmoji || '🌱';
       const bigEmoji = (st === 2) ? currentBigEmoji(btn, tot) : habitEmoji;
-      btn.innerHTML = `<div class="big">${bigEmoji}</div><div class="scoreText">${val}</div>`;
+      btn.innerHTML = `<div class="big">${bigEmoji}</div>`;
       btn.classList.toggle('done', st === 2);
     }
 
@@ -3544,9 +3577,29 @@
     const quitModalDeleteBtn = $("#quitModalDelete");
     const quitModalCancelBtn = $("#quitModalCancel");
     const open = m => m.classList.add('on'), close = m => m.classList.remove('on');
+    function canCloseGardenModal() {
+      return allowedSpaces.length > 0;
+    }
+    function syncGardenCloseButtonState() {
+      const btn = $("#closeGarden");
+      if (!btn) return;
+      const locked = !canCloseGardenModal();
+      btn.disabled = locked;
+      btn.classList.toggle('locked', locked);
+      btn.title = locked ? 'Crée un jardin pour fermer ce panneau.' : '';
+    }
     $("#addBtn").onclick = () => { open(mAdd); maybeTogglePrivateAdd(); };
     $("#closeAdd").onclick = () => close(mAdd);
-    $("#closeGarden").onclick = () => close(mGarden);
+    $("#closeGarden").onclick = () => {
+      if (!canCloseGardenModal()) {
+        if (gardenStatus) {
+          gardenStatus.textContent = 'Tu dois créer un jardin pour fermer ce panneau.';
+        }
+        return;
+      }
+      close(mGarden);
+    };
+    syncGardenCloseButtonState();
     function showQuitModal() {
       const sp = getSpace();
       if (!sp) return;
@@ -3718,6 +3771,7 @@
       gardenStatus.textContent = '';
       updateGardenModeHint();
       syncGardenModeButtons();
+      syncGardenCloseButtonState();
       open(mGarden);
     }
 
@@ -3745,6 +3799,7 @@
       spaceId = id;
       userName = currentProfile.name;
       allowedSpaces = [...new Set([...allowedSpaces, id])];
+      syncGardenCloseButtonState();
       try {
         await persistSpaceDoc(id, { createdBy: currentProfile.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), editButton: true });
         await loadHabitsForSpace(id);
@@ -3891,8 +3946,8 @@
         nextBtn.textContent = `Voir les habitudes (${ctxCount} contextes · ${needCount} besoins)`;
       }
 
-      contextSection = buildTagSection('Contextes', LIBRARY_CONTEXTS, 3, updateNextLabel);
-      needSection = buildTagSection('Besoins', LIBRARY_NEEDS, 3, updateNextLabel);
+      contextSection = buildTagSection('Contextes', LIBRARY_CONTEXTS, 3, updateNextLabel, 'context');
+      needSection = buildTagSection('Besoins', LIBRARY_NEEDS, 3, updateNextLabel, 'need');
 
       nextBtn.addEventListener('click', () => {
         if (!contextSection.selected.length || !needSection.selected.length) {
@@ -3909,7 +3964,7 @@
       updateNextLabel();
     }
 
-    function buildTagSection(title, tags, limit, onUpdate) {
+    function buildTagSection(title, tags, limit, onUpdate, type) {
       const container = document.createElement('div');
       container.className = 'tag-section';
       const titleRow = document.createElement('div');
@@ -3936,7 +3991,7 @@
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'tag';
-        btn.textContent = prettifyTag(tag);
+        btn.textContent = formatTagLabel(tag, type);
         btn.addEventListener('click', () => {
           const idx = selected.indexOf(tag);
           if (idx >= 0) {
@@ -3973,11 +4028,17 @@
       summary.textContent = `Résultat pour ${contextTags.length} contexte(s) et ${needTags.length} besoin(s).`;
       root.appendChild(summary);
 
-      const suggestions = computeSuggestedHabits(contextTags, needTags);
+      const matchingHabits = LIBRARY_HABITS
+        .filter(habit => (habit.contexts || []).some(ctx => contextTags.includes(ctx)))
+        .sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr'));
       const grid = document.createElement('div');
       grid.className = 'habit-grid';
-      const selection = new Set(suggestions.map(h => h.id));
-      const suggestionMap = new Map(suggestions.map(habit => [habit.id, habit]));
+      const selection = new Set();
+      matchingHabits.forEach(habit => {
+        const matchesNeed = (habit.needs || []).some(need => needTags.includes(need));
+        if (matchesNeed) selection.add(habit.id);
+      });
+      const suggestionMap = new Map(matchingHabits.map(habit => [habit.id, habit]));
       let addBtn;
       const updateAddLabel = () => {
         if (!addBtn) return;
@@ -3985,22 +4046,25 @@
         addBtn.disabled = selection.size === 0;
       };
 
-      if (!suggestions.length) {
+      if (!matchingHabits.length) {
         const info = document.createElement('div');
         info.className = 'miniInfo';
-        info.textContent = "Aucune habitude ne correspond exactement à ces tags pour l'instant.";
+        info.textContent = "Aucune habitude ne correspond aux contextes sélectionnés.";
         root.appendChild(info);
       } else {
         const hint = document.createElement('div');
         hint.className = 'subtitle';
         hint.style.marginTop = '4px';
-        hint.textContent = 'Ces habitudes sont présélectionnées, clic encore pour les retirer.';
+        hint.textContent = 'Les habitudes qui répondent aux besoins choisis sont présélectionnées.';
         root.appendChild(hint);
-        suggestions.forEach(habit => {
+        matchingHabits.forEach(habit => {
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className = 'habit-btn selected';
+          btn.className = 'habit-btn';
           btn.dataset.id = habit.id;
+          if (selection.has(habit.id)) {
+            btn.classList.add('selected');
+          }
           btn.innerHTML = `<span class="emoji">${habit.emoji || '🌱'}</span><span class="label">${habit.title}</span>`;
           btn.addEventListener('click', () => {
             const active = btn.classList.toggle('selected');
@@ -4034,7 +4098,7 @@
       }
 
       const controls = document.createElement('div');
-      controls.className = 'habit-actions';
+      controls.className = 'habit-actions footer-sticky';
       const backBtn = document.createElement('button');
       backBtn.type = 'button';
       backBtn.className = 'btn';
@@ -4045,30 +4109,6 @@
       root.appendChild(controls);
     }
 
-    function computeSuggestedHabits(contextTags, needTags) {
-      if (!LIBRARY_HABITS.length) return [];
-      const pool = LIBRARY_HABITS.map((habit, index) => {
-        const ctxMatches = (habit.contexts || []).filter(context => contextTags.includes(context)).length;
-        const needMatches = (habit.needs || []).filter(need => needTags.includes(need)).length;
-        const score = ctxMatches * 3 + needMatches * 4;
-        return { habit, score, index };
-      });
-      const filtered = pool.filter(item => item.score > 0);
-      filtered.sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return (a.habit.title || '').localeCompare(b.habit.title || '', 'fr');
-      });
-      const top = filtered.slice(0, 20);
-      if (top.length < 10) {
-        const ids = new Set(top.map(entry => entry.habit.id));
-        const fallback = LIBRARY_HABITS.filter(habit => !ids.has(habit.id)).slice(0, 10 - top.length);
-        fallback.forEach(habit => top.push({ habit, score: 0, index: Infinity }));
-      }
-      if (!top.length) {
-        return LIBRARY_HABITS.slice(0, Math.min(12, LIBRARY_HABITS.length));
-      }
-      return top.slice(0, 20).map(entry => entry.habit);
-    }
     $("#closeHabit").onclick = () => close(mHabit);
     $("#closeInvite").onclick = () => close(mInvite);
     $("#closeQuit").onclick = () => close(mQuit);

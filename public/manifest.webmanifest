@@ -1,7 +1,7 @@
 {
-  "name": "Habitu.be - Your week, simplified",
-  "short_name": "Habitu.be",
-  "description": "See your progress, one week at a time.",
+  "name": "Habitube - Ton jardin de routines partagées",
+  "short_name": "Habitube",
+  "description": "Ton jardin de routines partagées",
   "start_url": "./index.html",
   "display": "standalone",
   "scope": ".",
