@@ -1759,6 +1759,7 @@
     let pendingInviteInfo = null;
     const HABITU_FIREBASE_DB = window.HABITU_FIREBASE_DB;
     const ACTIVITY_BUFFER_MS = 30e3;
+    const IS_LOCAL_FILE_URL = window.location.protocol === 'file:';
     const activityQueue = new Map();
     const SESSION_COOKIE_NAME = 'habitube-session';
     const SESSION_COOKIE_MAX_AGE = 365 * 24 * 60 * 60 * 1000;
@@ -1871,11 +1872,15 @@
       return HABITU_FIREBASE_DB.collection('invites').doc(token).delete().catch(e => console.warn('deleteInvite', e));
     }
     function sendActivityToServer(payload) {
-      if (!HABITU_FIREBASE_DB) return Promise.resolve();
+      if (!HABITU_FIREBASE_DB || IS_LOCAL_FILE_URL) return Promise.resolve();
       return HABITU_FIREBASE_DB.collection('activities').add(payload).catch(e => console.warn('sendActivity', e));
     }
     function scheduleHabitActivity(habitId, payload) {
       if (!habitId) return;
+      if (IS_LOCAL_FILE_URL) {
+        console.warn('Skipping Firestore activity log while running from file://');
+        return;
+      }
       const key = `${habitId}:${payload.type}`;
       if (activityQueue.has(key)) {
         clearTimeout(activityQueue.get(key));
