@@ -379,14 +379,29 @@
       padding: 8px;
       background: #fff;
       flex-wrap: wrap;
-      justify-content: space-between
+      justify-content: flex-start
     }
 
-    .invite-row .subtitle {
-      flex: 1 1 160px;
-      word-break: break-word;
-      font-size: 11px;
-      color: #666
+    .invite-name {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .invite-link-row {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .invite-link-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #fffdf8;
+      cursor: pointer;
     }
 
     .invite-list {
@@ -1289,7 +1304,7 @@
                 </select>
                 <div id="freqSubPonctuelle" class="rowInline hide"><span>Date</span><input id="freqDate" type="text"
                     placeholder="JJ/MM/AAAA" /></div>
-        <div id="freqSubJours" class="hide freq-sub-jours">
+                <div id="freqSubJours" class="hide freq-sub-jours">
                   <label><input type="checkbox" value="1">Lu</label>
                   <label><input type="checkbox" value="2">Ma</label>
                   <label><input type="checkbox" value="3">Me</label>
@@ -1489,22 +1504,14 @@
         <div class="sheetBody">
           <div class="grid">
             <div class="field">
-              <label><b>Prénom du jardinier</b></label>
-              <input id="inviteName" type="text" placeholder="Aline" />
-              <div class="subtitle">Chaque prénom génère un lien unique (utilisé une seule fois).</div>
+              <label><b>Nouveau jardinier</b></label>
+              <input id="inviteName" type="text" placeholder="Prénom" />
             </div>
             <div style="display:flex;gap:8px;align-items:center">
-              <button class="btn primary" id="generateInvite">Générer</button>
+              <button class="btn primary" id="generateInvite">Inviter</button>
               <div id="inviteStatus" style="font-size:12px;color:#2a7a57"></div>
             </div>
-            <div class="field">
-              <label><b>Lien généré</b></label>
-              <div style="display:flex;gap:8px;align-items:center">
-                <input id="inviteLinkField" type="text" readonly />
-                <button class="btn copyOnly" id="copyInvite" title="Copier">🔗</button>
-              </div>
-            </div>
-            <div class="subtitle">Les invitations précédentes :</div>
+            <div class="subtitle">Les invitations :</div>
             <div id="inviteList" class="invite-list"></div>
           </div>
         </div>
@@ -2321,7 +2328,7 @@
         const durationLabel = base ? `${base} mn` : '0 mn';
         val = durationLabel;
       } else if (st === 1) {
-        val = 'Je fais';
+        val = owner || 'En cours';
       } else if (st === 2) {
         val = isWeek ? `Fait` : 'Fait';
       } else {
@@ -2467,7 +2474,8 @@
           const helpingNow = btn.dataset.helping === '1';
           const shouldShowOwner = (mode.type === 'commun') ? ((stNow === 1 || stNow === 2) ? ownerNow : '') : (stNow >= 1 ? 'Moi' : '');
           ensureOwnerBadge(friendsBadges, shouldShowOwner, it, btn);
-          if (mode.type === 'commun') {
+          const showHelpers = mode.type === 'commun' && stNow === 2;
+          if (showHelpers) {
             const hlist = (btn.dataset.helpers ? JSON.parse(btn.dataset.helpers) : []) || [];
             ensureHelperBadge(friendsBadges, hlist);
           } else {
@@ -2594,10 +2602,14 @@
         const clickLibre = () => {
           if (isWeekMode()) { clickWeekly(); return; }
           const st = +btn.dataset.state || 0;
-          const next = st === 0 ? 1 : (st === 1 ? 2 : 0);
-          if (next === 1) btn.dataset.owner = 'Moi';
-          if (next === 2) btn.dataset.owner = 'Moi';
-          applyState(next);
+          if (st === 0) {
+            btn.dataset.owner = 'Moi';
+            applyState(2);
+            return;
+          }
+          if (st === 2) {
+            applyState(0);
+          }
         };
 
         const handleClick = () => { (mode.type === 'commun') ? clickCommon() : clickLibre(); };
@@ -3396,10 +3408,8 @@
     const authNameInput = $("#authName");
     const inviteName = $("#inviteName");
     const inviteList = $("#inviteList");
-    const inviteLinkField = $("#inviteLinkField");
     const inviteStatus = $("#inviteStatus");
     const generateInviteBtn = $("#generateInvite");
-    const copyInviteBtn = $("#copyInvite");
     const confirmTransferBtn = $("#confirmTransferBtn");
     const transferStatus = $("#transferStatus");
     const transferSpaceBtn = $("#transferSpaceBtn");
@@ -3407,7 +3417,6 @@
     createGardenBtn.onclick = createGarden;
     $("#createGarden").onclick = () => { close(mAdd); openGardenFlow() };
     generateInviteBtn.onclick = generateInviteLink;
-    copyInviteBtn.onclick = () => { copyText(inviteLinkField.value, inviteStatus) };
     transferSpaceBtn?.addEventListener('click', () => openTransferModal());
     deleteSpaceBtn?.addEventListener('click', () => deleteCurrentSpace());
     confirmTransferBtn?.addEventListener('click', async () => {
@@ -3547,30 +3556,42 @@
         const token = invite.token;
         const row = document.createElement('div');
         row.className = 'invite-row';
-        const info = document.createElement('div');
-        info.innerHTML = `<strong>${invite.invitedName}</strong> · ${invite.gardenLabel || invite.label || 'ton jardin'}`;
+        const nameEl = document.createElement('div');
+        nameEl.className = 'invite-name';
+        nameEl.textContent = invite.invitedName;
         const link = `${window.location.origin}${window.location.pathname}?invite=${token}`;
-        const actions = document.createElement('div');
-        actions.style.display = 'flex';
-        actions.style.gap = '6px';
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'btn copyOnly';
-        copyBtn.textContent = 'Copier';
-        copyBtn.onclick = () => { copyText(link, inviteStatus) };
+        const linkWrapper = document.createElement('div');
+        linkWrapper.className = 'invite-link-row';
+        const icon = document.createElement('span');
+        icon.textContent = '🔗';
+        icon.style.userSelect = 'none';
+        icon.style.cursor = 'pointer';
+        const linkInput = document.createElement('input');
+        linkInput.type = 'text';
+        linkInput.value = link;
+        linkInput.readOnly = true;
+        linkInput.className = 'invite-link-input';
+        linkInput.addEventListener('click', () => {
+          linkInput.select();
+          copyText(link, inviteStatus);
+        });
+        linkInput.addEventListener('focus', () => linkInput.select());
+        icon.addEventListener('click', () => {
+          linkInput.select();
+          copyText(link, inviteStatus);
+        });
         const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn danger';
-        removeBtn.textContent = 'Supprimer';
+        removeBtn.className = 'btn copyOnly';
+        removeBtn.title = 'Supprimer';
+        removeBtn.textContent = '🗑️';
         removeBtn.onclick = async () => {
           await deleteInviteDoc(token);
           renderInviteList();
           inviteStatus.textContent = 'Invitation supprimée.';
           inviteStatus.style.color = '#2a7a57';
         };
-        actions.append(copyBtn, removeBtn);
-        const linkEl = document.createElement('div');
-        linkEl.className = 'subtitle';
-        linkEl.textContent = link;
-        row.append(info, linkEl, actions);
+        linkWrapper.append(icon, linkInput, removeBtn);
+        row.append(nameEl, linkWrapper);
         inviteList.appendChild(row);
       });
     }
@@ -3597,7 +3618,6 @@
       };
       await persistInviteDoc(token, inviteData);
       INVITE_CACHE[token] = { token, ...inviteData };
-      inviteLinkField.value = link;
       inviteStatus.textContent = 'Lien généré !';
       inviteStatus.style.color = '#2a7a57';
       renderInviteList();
