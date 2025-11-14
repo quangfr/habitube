@@ -7,7 +7,7 @@
     "note": "",
     "spaces": ["group","individual"],
     "contexts": ["colocation","famille","bureau"],
-    "needs": ["Organisation","Calme","Sens"]
+    "needs": ["Organisation","Calme","Sens"]  
   },
   {
     "emoji": "🧃",

@@ -1631,6 +1631,17 @@
       return `Du ${f(monday)} au ${f(sunday)}`;
     }
     function genCode() { const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let s = ''; for (let i = 0; i < 6; i++)s += c[Math.floor(Math.random() * c.length)]; return s; }
+    function genInviteToken() {
+      if (window.crypto?.randomUUID) {
+        return crypto.randomUUID().replace(/-/g, '');
+      }
+      if (window.crypto?.getRandomValues) {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+      return genCode();
+    }
     const round15 = m => Math.round(m / 15) * 15;
     function lvlEmoji(v) { if (v <= 7) return '🌰'; if (v <= 14) return '🌱'; if (v <= 21) return '🍀'; if (v <= 28) return '🌼'; if (v <= 35) return '🌻'; if (v <= 42) return '🌷'; if (v <= 49) return '🌹'; if (v <= 56) return '🪻'; if (v <= 64) return '💐'; return '🎋'; }
     function names(xs, m = 3) { if (xs.length <= m) return xs.join(', '); const s = xs.slice(0, m).join(', '); return `${s}… et ${xs.length - m} autres`; }
@@ -2005,7 +2016,12 @@
         url.searchParams.delete('invite');
         window.history.replaceState({}, '', url.pathname);
       }
-      pendingInviteInfo = invite;
+      pendingInviteInfo = null;
+      if (INVITE_CACHE[invite.token]) {
+        delete INVITE_CACHE[invite.token];
+        if (typeof renderInviteList === 'function') renderInviteList();
+      }
+      updateAuthMessage();
       return invite;
     }
     async function joinSpace(spaceId, email) {
@@ -3449,7 +3465,9 @@
 
     function updateAuthMessage() {
       if (pendingInviteInfo) {
-        authMessage.textContent = `Tu as été invité par ${pendingInviteInfo.ownerName || 'un jardinier'} à rejoindre le jardin "${pendingInviteInfo.gardenLabel || 'ton jardin'}".`;
+        const spaceName = pendingInviteInfo.gardenLabel || pendingInviteInfo.label || 'ton jardin';
+        const ownerName = pendingInviteInfo.ownerName || pendingInviteInfo.ownerEmail || 'un jardinier';
+        authMessage.textContent = `Connecte-toi pour retrouver le jardin "${spaceName}" de ${ownerName}.`;
         if (pendingInviteInfo.invitedName) {
           authNameInput.value = pendingInviteInfo.invitedName;
         }
@@ -3566,7 +3584,7 @@
       if (Object.values(INVITE_CACHE).some(inv => (inv.invitedName || '').toLowerCase() === name.toLowerCase())) {
         inviteStatus.textContent = 'Ce prénom est déjà utilisé pour une invitation.'; inviteStatus.style.color = '#d33'; return;
       }
-      const token = genCode();
+      const token = genInviteToken();
       const link = `${window.location.origin}${window.location.pathname}?invite=${token}`;
       const ownerName = currentProfile?.name || userName || 'Un jardinier';
       const inviteData = {
@@ -3979,11 +3997,7 @@
       const name = user.displayName || currentProfile?.name || 'Moi';
       persistProfile({ uid: user.uid, email, name });
       await persistUserProfile({ uid: user.uid, email, name });
-      const invite = await acceptPendingInvite(email);
-      if (invite) {
-        pendingInviteInfo = invite;
-        updateAuthMessage();
-      }
+      await acceptPendingInvite(email);
       hideAuthOverlay();
       showLoaderOverlay();
       try {
