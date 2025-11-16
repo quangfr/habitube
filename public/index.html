@@ -3275,59 +3275,34 @@
         }
       }
       async function loadLibraryData() {
-        async function loadFromStatic() {
-          const libraryUrl = new URL('library.json', window.location);
-          const response = await fetch(libraryUrl.href, { cache: 'no-store' });
-          if (!response.ok) throw new Error('library.json unavailable');
-          const data = await response.json();
-          if (!Array.isArray(data)) throw new Error('library.json malformé');
-          LIBRARY_HABITS.length = 0;
-          data.forEach((habit, index) => {
-            const slug = slugifyTag(habit.title || habit.titre || `habitude-${index}`);
-            const safeSlug = slug || `habitude-${index}`;
-            const id = habit.id || `lib-${safeSlug}-${index}`;
-            const descText = (habit.note || habit.desc || '').trim();
-            const candidateDuration = habit.baseMin ?? habit.duration;
-            const parsedDuration = Number(candidateDuration);
-            const baseMinVal = Number.isFinite(parsedDuration) ? Math.max(DEFAULT_DURATION, parsedDuration) : DEFAULT_DURATION;
-            LIBRARY_HABITS.push({
-              id,
-              ...habit,
-              desc: descText,
-              titre: habit.titre || habit.title || '',
-              baseMin: baseMinVal
-            });
+        const libraryUrl = new URL('library.json', window.location);
+        const response = await fetch(libraryUrl.href, { cache: 'no-store' });
+        if (!response.ok) throw new Error('library.json unavailable');
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error('library.json malformé');
+        LIBRARY_HABITS.length = 0;
+        data.forEach((habit, index) => {
+          const slug = slugifyTag(habit.title || habit.titre || `habitude-${index}`);
+          const safeSlug = slug || `habitude-${index}`;
+          const id = habit.id || `lib-${safeSlug}-${index}`;
+          const descText = (habit.note || habit.desc || '').trim();
+          const candidateDuration = habit.baseMin ?? habit.duration;
+          const parsedDuration = Number(candidateDuration);
+          const baseMinVal = Number.isFinite(parsedDuration) ? Math.max(DEFAULT_DURATION, parsedDuration) : DEFAULT_DURATION;
+          LIBRARY_HABITS.push({
+            id,
+            ...habit,
+            desc: descText,
+            titre: habit.titre || habit.title || '',
+            baseMin: baseMinVal
           });
-        }
-
-        try {
-          if (!HABITU_FIREBASE_DB) throw new Error('firestore unavailable');
-          const snapshot = await HABITU_FIREBASE_DB.collection('libraryHabits').get();
-          LIBRARY_HABITS.length = 0;
-          snapshot.docs.forEach(doc => LIBRARY_HABITS.push({ id: doc.id, ...doc.data() }));
-        } catch (err) {
-          console.warn('loadLibraryData (firestore)', err);
-          try {
-            await loadFromStatic();
-          } catch (staticErr) {
-            console.warn('loadLibraryData (static)', staticErr);
-            LIBRARY_HABITS.length = 0;
-          }
-        } finally {
-          refreshLibraryTags();
-        }
-      }
-      let libraryDataPromise = null;
-      function ensureLibraryData(force = false) {
-        if (force || !libraryDataPromise) {
-          libraryDataPromise = loadLibraryData();
-        }
-        return libraryDataPromise;
+        });
+        refreshLibraryTags();
       }
       async function resetFirestoreState(email) {
         clearLocalState();
         if (!email) { return; }
-        await ensureLibraryData(true);
+        await loadLibraryData();
         const spaces = await fetchSpacesForEmail(email);
         allowedSpaces = spaces.map(space => space.id);
         spaces.forEach(space => { SPACES[space.id] = { ...space, members: space.members || [], ch: [] }; });
@@ -6193,7 +6168,7 @@
           updateAddModalOptions();
           showLoaderOverlay();
           try {
-            await ensureLibraryData();
+            await loadLibraryData();
           } finally {
             hideLoaderOverlay();
           }
@@ -6243,7 +6218,7 @@
             updateAddModalOptions();
             showLoaderOverlay();
             try {
-              await ensureLibraryData();
+              await loadLibraryData();
             } finally {
               hideLoaderOverlay();
             }
@@ -6284,7 +6259,7 @@
           updateAddModalOptions();
           showLoaderOverlay();
           try {
-            await ensureLibraryData();
+            await loadLibraryData();
           } finally {
             hideLoaderOverlay();
           }
