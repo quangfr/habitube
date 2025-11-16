@@ -3276,10 +3276,35 @@
       }
       async function loadLibraryData() {
         const libraryUrl = new URL('library.json', window.location);
-        const response = await fetch(libraryUrl.href, { cache: 'no-store' });
-        if (!response.ok) throw new Error('library.json unavailable');
-        const data = await response.json();
-        if (!Array.isArray(data)) throw new Error('library.json malformé');
+        let data = null;
+        try {
+          const response = await fetch(libraryUrl.href, { cache: 'no-store' });
+          if (response.ok) {
+            const parsed = await response.json();
+            if (Array.isArray(parsed)) {
+              data = parsed;
+            } else {
+              console.warn('loadLibraryData: library.json malformé');
+            }
+          } else {
+            console.warn('loadLibraryData: library.json unavailable');
+          }
+        } catch (err) {
+          console.warn('loadLibraryData static fetch', err);
+        }
+        if (!data && HABITU_FIREBASE_DB) {
+          try {
+            const snapshot = await HABITU_FIREBASE_DB.collection('libraryHabits').get();
+            const fetched = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            data = fetched;
+          } catch (err) {
+            console.warn('loadLibraryData firestore', err);
+          }
+        }
+        if (!data) {
+          console.warn('loadLibraryData: no data available');
+          return;
+        }
         LIBRARY_HABITS.length = 0;
         data.forEach((habit, index) => {
           const slug = slugifyTag(habit.title || habit.titre || `habitude-${index}`);
