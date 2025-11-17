@@ -676,17 +676,23 @@
     }
 
     .card {
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
       background: var(--bg);
       border-radius: var(--r);
+      transition: transform 0.15s ease;
       display: grid;
       grid-template-columns: 64px 1fr;
       overflow: hidden
     }
 
+    .card:active {
+      transform: translateY(1px);
+    }
+
     .list.dense-view {
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 4px;
+      gap: 2px;
+      padding: 8px 4px 4px 2px;
     }
 
     .list.dense-view .card {
@@ -722,7 +728,7 @@
     }
 
     .list.dense-view .content {
-      padding: 0;
+      padding: 2px 0 0 0;
       gap: 4px;
     }
 
@@ -746,10 +752,12 @@
       margin-top: 0;
       margin-bottom: 0;
     }
+
     .list.dense-view.week-mode .weekly-progress {
       order: 0;
       margin-bottom: 4px;
     }
+
     .list.dense-view.week-mode .title {
       order: 1;
     }
@@ -768,14 +776,18 @@
 
     .schedule-days-mini {
       display: none;
-      gap: 4px;
+      gap: 2px;
       align-items: center;
       flex-wrap: wrap;
       margin-bottom: 4px;
     }
 
     .weekly-progress__block--today {
-      box-shadow: inset 0 0 0 1px rgba(30, 31, 26, 0.7);
+      box-shadow: 0 0 0 1px var(--border);
+    }
+
+    .schedule-days-mini__today {
+      box-shadow: 0 0 0 1px var(--border);
     }
 
     /* Encadrés par état + auteur + mode */
@@ -862,6 +874,8 @@
 
     .title .base {
       font-weight: 500;
+      line-height: 1.2;
+      min-height: 22px;
     }
 
     .weekly-progress {
@@ -894,6 +908,12 @@
     .weekly-progress__block--pending {
       background: var(--bg);
       border-color: var(--border);
+    }
+
+    .weekly-progress__block--disabled {
+      border: none;
+      background: transparent;
+      box-shadow: none;
     }
 
     .title .left {
@@ -1036,11 +1056,20 @@
       justify-content: center;
       user-select: none;
       line-height: 1.05;
-      position: relative
+      position: relative;
+      transition: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .levelBtn.done {
       background: var(--bg);
+    }
+
+    .levelBtn:active,
+    .levelBtn:focus-visible {
+      transform: none;
+      outline: none;
+      box-shadow: none;
     }
 
     .levelBtn .big {
@@ -2410,7 +2439,7 @@
       const FREQ_MODE = {}, HABIT_REC = {};
 
       /* Utils */
-      const APP_VERSION = '0.0.12';
+      const APP_VERSION = '0.0.13';
       const NEED_EMOJIS = {
         affection: '❤️',
         joy: '😄',
@@ -2484,7 +2513,7 @@
           hasOption = true;
         };
         if (shouldShowEditButton(btn.dataset.state)) {
-          addOption('Modifier', () => {
+          addOption('Éditer', () => {
             hideCardContextMenu();
             openDetail(habit.id, btn);
             selectDetailTab('settings');
@@ -2916,7 +2945,7 @@
         maybeShowInstallPrompt(false);
       });
       const MIN_DAY_OFF = -3650;
-      const DAY_LABELS = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
+      const DAY_LABELS = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
       const FULL_WEEK_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
       function normalizeDayIndex(value) {
@@ -4348,7 +4377,7 @@
 
             const col = document.createElement('div');
             col.className = 'levelCol';
-            const btn = document.createElement('button');
+            const btn = document.createElement('div');
             btn.className = 'levelBtn';
             btn.dataset.cid = it.id;
             btn.dataset.habitEmoji = it.emoji || '🌱';
@@ -4501,19 +4530,27 @@
                 dayStates[index] = Math.max(dayStates[index], stateNow);
               });
               const todayIndex = (today.getDay() + 6) % 7;
+              const currentState = Math.max(0, Math.min(2, Number(btn.dataset.state) || 0));
+              dayStates[todayIndex] = Math.max(dayStates[todayIndex], currentState);
               scheduleMiniRow.innerHTML = '';
               dayStates.forEach((state, idx) => {
                 const block = document.createElement('span');
                 block.className = 'weekly-progress__block';
-                if (state >= 2) {
-                  block.classList.add('weekly-progress__block--done');
-                } else if (state === 1) {
-                  block.classList.add('weekly-progress__block--active');
+                const isAvailableDay = scheduledDaySet.size === 0 || scheduledDaySet.has(idx);
+                if (!isAvailableDay) {
+                  block.classList.add('weekly-progress__block--disabled');
                 } else {
-                  block.classList.add('weekly-progress__block--pending');
+                  if (state >= 2) {
+                    block.classList.add('weekly-progress__block--done');
+                  } else if (state === 1) {
+                    block.classList.add('weekly-progress__block--active');
+                  } else {
+                    block.classList.add('weekly-progress__block--pending');
+                  }
                 }
                 if (idx === todayIndex) {
                   block.classList.add('weekly-progress__block--today');
+                  block.classList.add('schedule-days-mini__today');
                 }
                 scheduleMiniRow.appendChild(block);
               });
@@ -4535,6 +4572,10 @@
 
             const freqType = getHabitFreqType(it);
             const scheduledDays = getHabitFreqDays(it);
+            const scheduledDaySet = new Set(scheduledDays
+              .map(day => ((Number(day) || 0) % 7 + 7) % 7)
+              .map(day => (day + 6) % 7)
+            );
             const showSchedule = !isWeekSpace && freqType === 'jours' && scheduledDays.length > 0;
             const populateScheduleRow = () => {
               if (!showSchedule) {
