@@ -64,7 +64,7 @@
     }
 
     #app {
-      max-width: 480px;
+      max-width: min(480px, 100%);
       margin: 0 auto;
       min-height: 100%;
       display: flex;
@@ -685,8 +685,8 @@
     }
 
     .list.dense-view {
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 4px;
     }
 
     .list.dense-view .card {
@@ -2356,7 +2356,7 @@
       const FREQ_MODE = {}, HABIT_REC = {};
 
       /* Utils */
-      const APP_VERSION = '0.0.10';
+      const APP_VERSION = '0.0.11';
       const NEED_EMOJIS = {
         affection: '❤️',
         joy: '😄',
