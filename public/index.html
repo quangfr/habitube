@@ -2234,7 +2234,7 @@
       const FREQ_MODE = {}, HABIT_REC = {};
 
       /* Utils */
-      const APP_VERSION = '0.0.2';
+      const APP_VERSION = '0.0.3';
       const NEED_EMOJIS = {
         affection: '❤️',
         joy: '😄',
@@ -6369,7 +6369,7 @@
           return;
         }
         updateRequestInProgress = true;
-        showToast(auto ? 'Recherche automatique des nouveautés…' : 'Vérification des nouveautés…', { type: 'info', duration: 5000 });
+        showToast(auto ? 'Mise à jour…' : 'Mise à jour…', { type: 'info', duration: 5000 });
         try {
           await clearAppCaches();
           const registration = await ensureSwRegistration();
@@ -6380,9 +6380,7 @@
           await registration.update();
           if (registration.waiting) {
             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-            showToast('Nouvelle version prête, le navigateur recharge…', { type: 'success' });
-          } else {
-            showToast('L’application est déjà à jour.', { type: 'info' });
+            showToast(''Mise à jour'…', { type: 'success' });
           }
         } catch (err) {
           console.warn('handleAppUpdateRequest', err);
