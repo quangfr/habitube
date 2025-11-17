@@ -734,7 +734,7 @@
     .list.dense-view .title .base {
       white-space: normal;
       overflow: hidden;
-      line-height: 1.2;
+      line-height: 1.1;
       max-height: 2.4em;
     }
 
@@ -746,6 +746,13 @@
       margin-top: 0;
       margin-bottom: 0;
     }
+    .list.dense-view.week-mode .weekly-progress {
+      order: 0;
+      margin-bottom: 4px;
+    }
+    .list.dense-view.week-mode .title {
+      order: 1;
+    }
 
     .list.dense-view .schedule-days,
     .list.dense-view .desc,
@@ -755,8 +762,16 @@
 
     .list.dense-view .weekly-progress__block {
       width: 8px;
-      height: 6px;
+      height: 8px;
       border-radius: 4px;
+    }
+
+    .schedule-days-mini {
+      display: none;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
     }
 
     .weekly-progress__block--today {
@@ -800,10 +815,7 @@
     }
 
     .schedule-days {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin-bottom: 4px;
+      display: none !important;
     }
 
     .schedule-days__pill {
@@ -811,29 +823,31 @@
       height: 18px;
       border-radius: 6px;
       font-size: 9px;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #f7f3ea;
+      border: 1px solid var(--bg);
+      background: var(--bg);
+      color: var(--text);
     }
 
     .schedule-days__pill--done {
-      background: #3b905f;
+      background: var(--green);
       color: #fff;
-      border-color: #3b905f;
+      border-color: var(--green);
     }
 
     .schedule-days__pill--active {
       background: #f5c654;
-      color: #fff;
+      color: #1e1f1a;
       border-color: #f5c654;
     }
 
     .schedule-days__pill--pending {
       background: var(--bg);
-      color: #5a5a56;
-      border-color: #c6beae;
+      color: var(--text);
+      border-color: var(--bg);
     }
 
     .title {
@@ -841,10 +855,11 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: 14px;
+      font-size: 15px;
       min-height: 22px;
       justify-content: space-between
     }
+
     .title .base {
       font-weight: 500;
     }
@@ -862,22 +877,23 @@
       height: 8px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      background: #f4e0c7;
+      background: var(--bg);
       transition: background .2s, border-color .2s;
     }
 
     .weekly-progress__block--done {
       background: var(--green);
-      border-color: transparent;
+      border-color: var(--green);
     }
 
     .weekly-progress__block--active {
-      background: #f3c44a;
-      border-color: #f3c44a;
+      background: #f5c654;
+      border-color: #f5c654;
     }
 
     .weekly-progress__block--pending {
-      background: #f7f3ea;
+      background: var(--bg);
+      border-color: var(--border);
     }
 
     .title .left {
@@ -1342,6 +1358,42 @@
       height: calc(100% - 50px);
       overflow: auto;
       background: var(--bg)
+    }
+
+    .card-context-menu {
+      position: fixed;
+      z-index: 45;
+      display: none;
+      flex-direction: column;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .25);
+      min-width: 150px;
+      overflow: hidden;
+    }
+
+    .card-context-menu.open {
+      display: flex;
+    }
+
+    .card-context-menu button {
+      border: none;
+      background: transparent;
+      text-align: left;
+      padding: 10px 14px;
+      font: 500 13px/1.2 system-ui, -apple-system, Roboto, sans-serif;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .card-context-menu button:not(:last-child) {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-context-menu button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .modal-link-row {
@@ -2331,6 +2383,8 @@
       </div>
     </div>
 
+    <div id="cardContextMenu" class="card-context-menu" role="menu"></div>
+
     <script src="library.js"></script>
     <script>
       /* ===== Données ===== */
@@ -2356,7 +2410,7 @@
       const FREQ_MODE = {}, HABIT_REC = {};
 
       /* Utils */
-      const APP_VERSION = '0.0.11';
+      const APP_VERSION = '0.0.12';
       const NEED_EMOJIS = {
         affection: '❤️',
         joy: '😄',
@@ -2393,6 +2447,100 @@
         slowness: '🐢',
         lenteur: '🐢'
       };
+      const cardContextMenuEl = document.getElementById('cardContextMenu');
+      let shouldSuppressCardClick = false;
+      const CARD_CONTEXT_LONG_PRESS_MS = 520;
+      function hideCardContextMenu() {
+        if (!cardContextMenuEl) return;
+        cardContextMenuEl.classList.remove('open');
+      }
+      function toggleCardLikeAction(btn, habitId) {
+        if (!btn) return;
+        const heartList = JSON.parse(btn.dataset.heartList || '[]');
+        const canonicalName = getCurrentOwnerLabel();
+        const alreadyLiked = heartList.some(isCurrentUserLabel);
+        const updated = alreadyLiked
+          ? heartList.filter(name => !isCurrentUserLabel(name))
+          : [canonicalName, ...heartList.filter(name => !isCurrentUserLabel(name))];
+        btn.dataset.heartList = JSON.stringify(updated);
+        const liked = updated.some(isCurrentUserLabel);
+        scheduleHabitActivity(habitId, { type: 'like', liked, recipients: updated });
+        hideCardContextMenu();
+        renderCards();
+      }
+      function showCardContextMenu(habit, btn, clientX, clientY) {
+        if (!cardContextMenuEl || !habit || !btn) return;
+        cardContextMenuEl.innerHTML = '';
+        let hasOption = false;
+        const addOption = (label, handler) => {
+          const option = document.createElement('button');
+          option.type = 'button';
+          option.textContent = label;
+          option.addEventListener('click', (event) => {
+            event.stopPropagation();
+            handler();
+          });
+          cardContextMenuEl.appendChild(option);
+          hasOption = true;
+        };
+        if (shouldShowEditButton(btn.dataset.state)) {
+          addOption('Modifier', () => {
+            hideCardContextMenu();
+            openDetail(habit.id, btn);
+            selectDetailTab('settings');
+          });
+        }
+        const heartList = JSON.parse(btn.dataset.heartList || '[]');
+        const liked = heartList.some(isCurrentUserLabel);
+        const ownerIsMe = isCurrentUserLabel(btn.dataset.owner || '');
+        const stateNow = +btn.dataset.state || 0;
+        const canShowLikeOption = (stateNow === 1 || stateNow === 2) && !ownerIsMe;
+        if (canShowLikeOption) {
+          addOption(liked ? 'Retirer mon j’aime' : 'J’aime', () => toggleCardLikeAction(btn, habit.id));
+        }
+        if (!hasOption) return;
+        cardContextMenuEl.style.left = '0px';
+        cardContextMenuEl.style.top = '0px';
+        cardContextMenuEl.classList.add('open');
+        const rect = cardContextMenuEl.getBoundingClientRect();
+        const safeLeft = Math.min(Math.max(8, clientX), Math.max(8, window.innerWidth - rect.width - 8));
+        const safeTop = Math.min(Math.max(8, clientY), Math.max(8, window.innerHeight - rect.height - 8));
+        cardContextMenuEl.style.left = `${safeLeft}px`;
+        cardContextMenuEl.style.top = `${safeTop}px`;
+        shouldSuppressCardClick = true;
+        setTimeout(() => { shouldSuppressCardClick = false; }, 200);
+      }
+      function attachCardContextHandlers(card, btn, habit) {
+        if (!card || !btn || !habit) return;
+        let longPressTimer = null;
+        const clearLongPress = () => {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+        };
+        const startLongPress = (event) => {
+          if (event.pointerType === 'mouse' && event.button !== 0) return;
+          clearLongPress();
+          longPressTimer = setTimeout(() => {
+            showCardContextMenu(habit, btn, event.clientX, event.clientY);
+          }, CARD_CONTEXT_LONG_PRESS_MS);
+        };
+        card.addEventListener('pointerdown', startLongPress);
+        card.addEventListener('pointerup', clearLongPress);
+        card.addEventListener('pointerleave', clearLongPress);
+        card.addEventListener('pointercancel', clearLongPress);
+        card.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          showCardContextMenu(habit, btn, event.clientX, event.clientY);
+        });
+      }
+      document.addEventListener('pointerdown', (event) => {
+        if (!cardContextMenuEl?.classList.contains('open')) return;
+        if (!cardContextMenuEl.contains(event.target)) hideCardContextMenu();
+      });
+      window.addEventListener('scroll', hideCardContextMenu);
+      window.addEventListener('resize', hideCardContextMenu);
       function slugifyTag(text) {
         const base = (text || '').toString();
         const normalized = base.normalize ? base.normalize('NFD') : base;
@@ -4130,9 +4278,11 @@
       /* Cartes */
       function renderCards() {
         const root = $("#cards");
+        hideCardContextMenu();
         if (!root) return;
         const isDenseList = isHabitListDense();
         root.classList.toggle('dense-view', isDenseList);
+        root.classList.toggle('week-mode', isWeekMode());
         root.innerHTML = '';
         if (!spaceId) return;
         const today = curDate();
@@ -4191,7 +4341,10 @@
             friends.appendChild(friendsBadges);
             const progressRow = document.createElement('div');
             progressRow.className = 'weekly-progress';
-            cont.append(scheduleRow, progressRow, title, desc, friends);
+            const scheduleMiniRow = document.createElement('div');
+            scheduleMiniRow.className = 'schedule-days-mini';
+            scheduleMiniRow.style.display = 'none';
+            cont.append(scheduleRow, progressRow, scheduleMiniRow, title, desc, friends);
 
             const col = document.createElement('div');
             col.className = 'levelCol';
@@ -4297,45 +4450,7 @@
               ensureHeartBadge(friendsBadges, shouldHeart, arr, btn, it.id);
             };
 
-            const renderProgressDots = () => {
-              const isWeekModeView = btn.dataset.week === '1';
-              const showDailyDots = isDenseList && !isWeekModeView;
-              if (showDailyDots) {
-                progressRow.style.display = 'flex';
-                progressRow.innerHTML = '';
-                const weekStart = getWeekStart(today);
-                const weekRecords = getHabitRecords(spaceId, it.id, weekStart);
-                const dayStates = new Array(7).fill(0);
-                weekRecords.forEach(rec => {
-                  const recDay = rec.recordedAt?.getDay();
-                  if (!Number.isFinite(recDay)) return;
-                  const index = (recDay + 6) % 7;
-                  const stateNow = Math.max(0, Math.min(2, Number(rec.state) || 0));
-                  dayStates[index] = Math.max(dayStates[index], stateNow);
-                });
-                const todayIndex = (today.getDay() + 6) % 7;
-                dayStates.forEach((state, idx) => {
-                  const block = document.createElement('span');
-                  block.className = 'weekly-progress__block';
-                  if (state >= 2) {
-                    block.classList.add('weekly-progress__block--done');
-                  } else if (state === 1) {
-                    block.classList.add('weekly-progress__block--active');
-                  } else {
-                    block.classList.add('weekly-progress__block--pending');
-                  }
-                  if (idx === todayIndex) {
-                    block.classList.add('weekly-progress__block--today');
-                  }
-                  progressRow.appendChild(block);
-                });
-                return;
-              }
-              if (!isDenseList && !isWeekModeView) {
-                progressRow.style.display = 'none';
-                progressRow.innerHTML = '';
-                return;
-              }
+            const renderWeeklyRow = () => {
               const recur = Math.max(1, +btn.dataset.recur || 1);
               const totalBlocks = isDenseList ? Math.max(1, recur) : recur;
               if (!isDenseList && totalBlocks <= 1) {
@@ -4372,6 +4487,50 @@
                 }
                 progressRow.appendChild(block);
               }
+            };
+
+            const renderDailyMiniRow = () => {
+              const weekStart = getWeekStart(today);
+              const weekRecords = getHabitRecords(spaceId, it.id, weekStart);
+              const dayStates = new Array(7).fill(0);
+              weekRecords.forEach(rec => {
+                const recDay = rec.recordedAt?.getDay();
+                if (!Number.isFinite(recDay)) return;
+                const index = (recDay + 6) % 7;
+                const stateNow = Math.max(0, Math.min(2, Number(rec.state) || 0));
+                dayStates[index] = Math.max(dayStates[index], stateNow);
+              });
+              const todayIndex = (today.getDay() + 6) % 7;
+              scheduleMiniRow.innerHTML = '';
+              dayStates.forEach((state, idx) => {
+                const block = document.createElement('span');
+                block.className = 'weekly-progress__block';
+                if (state >= 2) {
+                  block.classList.add('weekly-progress__block--done');
+                } else if (state === 1) {
+                  block.classList.add('weekly-progress__block--active');
+                } else {
+                  block.classList.add('weekly-progress__block--pending');
+                }
+                if (idx === todayIndex) {
+                  block.classList.add('weekly-progress__block--today');
+                }
+                scheduleMiniRow.appendChild(block);
+              });
+            };
+
+            const renderProgressDots = () => {
+              const isWeekModeView = btn.dataset.week === '1';
+              if (!isWeekModeView) {
+                progressRow.style.display = 'none';
+                progressRow.innerHTML = '';
+                scheduleMiniRow.style.display = 'flex';
+                renderDailyMiniRow();
+                return;
+              }
+              scheduleMiniRow.style.display = 'none';
+              scheduleMiniRow.innerHTML = '';
+              renderWeeklyRow();
             };
 
             const freqType = getHabitFreqType(it);
@@ -4529,6 +4688,10 @@
             };
 
             const handleClick = () => {
+              if (shouldSuppressCardClick) {
+                shouldSuppressCardClick = false;
+                return;
+              }
               (mode.type === 'commun') ? clickCommon() : clickLibre();
             };
 
@@ -4563,6 +4726,7 @@
             cont.addEventListener('click', (e) => { if (e.target.closest('.badge')) return; handleClick(); });
             col.append(btn);
             card.append(col, cont);
+            attachCardContextHandlers(card, btn, it);
             root.appendChild(card);
           });
         }
