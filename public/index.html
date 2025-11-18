@@ -732,7 +732,7 @@
       border-radius: var(--r);
       transition: transform 0.15s ease;
       display: grid;
-      grid-template-columns: 64px 1fr;
+      grid-template-columns: 50px minmax(0, 1fr);
       overflow: hidden;
       touch-action: manipulation;
       user-select: none;
@@ -877,6 +877,17 @@
       font-size: 15px;
       min-height: 22px;
       justify-content: space-between
+    }
+
+    .recurrence-badge {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0 8px;
+      font-size: 11px;
+      color: var(--text);
+      background: var(--card);
+      margin-left: 8px;
+      white-space: nowrap;
     }
 
     .title .base {
@@ -1720,6 +1731,38 @@
       cursor: pointer;
     }
 
+    .recurrence-date-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .recurrence-date {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .recurrence-date__control {
+      font-family: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+    }
+
+    .recurrence-date__control input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--text);
+      font-weight: 500;
+    }
+    .recurrence-date__control input:focus {
+      outline: 2px solid var(--green);
+      border-color: var(--green);
+    }
+
     .opt.disabled {
       opacity: 0.45;
       cursor: not-allowed;
@@ -1848,10 +1891,10 @@
       cursor: pointer;
     }
 
-    =======>>>>>>>theirs .field .access-code-row {
+    .field .access-code-row {
       display: flex;
       gap: 6px;
-      align-items: stretch;
+      align-items: center;
     }
 
     .field .access-code-row input {
@@ -2220,17 +2263,27 @@
                 </label>
               </div>
               <div class="freq-weekdays recurrence-days" id="habitRecurrenceDays">
-                <label><input type="checkbox" value="1">Lu</label>
-                <label><input type="checkbox" value="2">Ma</label>
-                <label><input type="checkbox" value="3">Me</label>
-                <label><input type="checkbox" value="4">Je</label>
-                <label><input type="checkbox" value="5">Ve</label>
-                <label><input type="checkbox" value="6">Sa</label>
-                <label><input type="checkbox" value="0">Di</label>
+                <label><input type="checkbox" value="1">Lundi</label>
+                <label><input type="checkbox" value="2">Mardi</label>
+                <label><input type="checkbox" value="3">Mercredi</label>
+                <label><input type="checkbox" value="4">Jeudi</label>
+                <label><input type="checkbox" value="5">Vendredi</label>
+                <label><input type="checkbox" value="6">Samedi</label>
+                <label><input type="checkbox" value="0">Dimanche</label>
               </div>
-              <div class="field">
-                <label><b>Date de démarrage</b></label>
-                <input id="habitStartDate" type="date" />
+              <div class="recurrence-date-row">
+                <div class="recurrence-date">
+                  <label><b>Début</b></label>
+                <div class="recurrence-date__control">
+                    <input id="habitStartDate" type="date" />
+                  </div>
+                </div>
+                <div class="recurrence-date">
+                  <label><b>Fin</b></label>
+                  <div class="recurrence-date__control">
+                    <input id="habitEndDate" type="date" />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2621,9 +2674,7 @@
       const cardContextMenuEl = document.getElementById('cardContextMenu');
       const HABIT_FILTERS = [
         { key: 'todo', label: 'À faire', emptyText: 'Tu as fait le tour de ce filtre pour le moment.' },
-        { key: 'inProgress', label: 'En cours', emptyText: 'Tu n’as pas commencé d’habitude pour l’instant.' },
         { key: 'done', label: 'Fait', emptyText: 'Aucune habitude terminée pour le moment.' },
-        { key: 'ignored', label: 'Ignoré', emptyText: 'Tu n’as pas ignoré d’habitude aujourd’hui.' },
         { key: 'hidden', label: 'Caché', emptyText: 'Tu n’as pas caché d’habitude encore.' }
       ];
       let activeHabitFilter = 'todo';
@@ -2730,7 +2781,7 @@
         renderCards();
       }
 
-      function habitMatchesFilter(filterKey, { state = 0, isIgnored = false, isHidden = false, dueToday = true } = {}) {
+      function habitMatchesFilter(filterKey, { state = 0, isHidden = false, dueToday = true } = {}) {
         const normalized = filterKey || HABIT_FILTERS[0].key;
         if (isHidden) {
           return normalized === 'hidden';
@@ -2738,17 +2789,11 @@
         if (normalized === 'hidden') {
           return false;
         }
-        if (normalized === 'ignored') {
-          return isIgnored;
-        }
-        if (!dueToday || isIgnored) {
+        if (!dueToday) {
           return false;
         }
         if (normalized === 'todo') {
-          return state === 0;
-        }
-        if (normalized === 'inProgress') {
-          return state === 1;
+          return state < 2;
         }
         if (normalized === 'done') {
           return state === 2;
@@ -2778,7 +2823,7 @@
           hasOption = true;
         };
         if (shouldShowContextMenuEdit()) {
-          addOption("Éditer l'habitude", () => {
+          addOption('Éditer', () => {
             hideCardContextMenu();
             openDetail(habit.id, btn);
           });
@@ -2792,20 +2837,14 @@
             pinHabitAction(habit.id);
           }
         });
-        const isIgnored = isHabitIgnoredToday(habit.id);
         const isHidden = isHabitHidden(habit.id);
-        const ignoreLabel = isIgnored ? 'Ne plus ignorer' : 'Ignorer pour aujourd’hui';
-        addOption(ignoreLabel, () => {
-          hideCardContextMenu();
-          toggleHabitIgnore(habit.id);
-        });
         if (isHidden) {
           addOption('Rendre visible', () => {
             hideCardContextMenu();
             showHabit(habit.id);
           });
         } else {
-          addOption('Cacher définitivement', () => {
+          addOption('Cacher', () => {
             hideCardContextMenu();
             hideHabit(habit.id);
           });
@@ -2819,7 +2858,7 @@
             toggleShiftForHabit(habit.id);
           });
         } else {
-          addOption('Décaler au lendemain', () => {
+          addOption('Décaler', () => {
             hideCardContextMenu();
             toggleShiftForHabit(habit.id);
           });
@@ -3356,6 +3395,7 @@
       const FULL_WEEK_DAYS = [0, 1, 2, 3, 4, 5, 6];
       const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
       const WEEKDAY_SHORT_LABELS = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
+      const WEEKDAY_BADGE_LABEL = { 1: 'L', 2: 'Ma', 3: 'Me', 4: 'Je', 5: 'Ve', 6: 'Sa', 0: 'Di' };
 
       function normalizeDayList(list) {
         if (!Array.isArray(list)) return [];
@@ -3374,6 +3414,21 @@
         if (!Number.isFinite(num)) return null;
         const floored = Math.floor(num);
         return ((floored % 7) + 7) % 7;
+      }
+
+      function buildHabitRecurrenceLabel(habit) {
+        const recurrence = getHabitRecurrenceSetting(habit?.id) || {};
+        const mode = recurrence.mode || 'weekly';
+        const days = normalizeDayList((recurrence.days && recurrence.days.length) ? recurrence.days : getHabitDayPreferences());
+        if (!days.length) return '';
+        const orderedDays = WEEKDAY_ORDER.filter(day => days.includes(day));
+        const labelDays = orderedDays.map(day => WEEKDAY_BADGE_LABEL[day]).filter(Boolean).join('');
+        if (!labelDays) return '';
+        if (mode === 'interval') {
+          const intervalWeeks = Math.max(2, Math.min(4, Number(recurrence.intervalWeeks) || 2));
+          return `${labelDays} /${intervalWeeks}`;
+        }
+        return labelDays;
       }
 
       function normalizeHabitRecurrenceMap(map) {
@@ -4904,7 +4959,6 @@
             const isShiftedToday = shiftKey === todayKey;
             ensureHabit(it.id);
             const visibleToday = shouldHabitOccurToday(it, today);
-            const isIgnored = isHabitIgnoredToday(it.id, todayKey);
             const isHiddenHabit = isHabitHidden(it.id);
 
             const card = document.createElement('article');
@@ -4921,6 +4975,13 @@
             const displayTitle = habitLabel(it);
             left.innerHTML = `<span class="base">${displayTitle}</span>`;
             title.append(left);
+            const recurrenceLabel = buildHabitRecurrenceLabel(it);
+            if (recurrenceLabel) {
+              const badge = document.createElement('span');
+              badge.className = 'recurrence-badge';
+              badge.textContent = recurrenceLabel;
+              title.append(badge);
+            }
 
             const desc = document.createElement('div');
             desc.className = 'desc';
@@ -4974,8 +5035,7 @@
             const state = userState;
             const contextForCounts = {
               state,
-              isIgnored,
-              isHidden: isHiddenHabit,
+             isHidden: isHiddenHabit,
               dueToday: visibleToday
             };
             if (!visibleToday && !pinned) return;
@@ -5108,14 +5168,24 @@
             }
             attachCardContextHandlers(card, btn, it);
             if (isShiftedToday) {
-              shiftedCards.push(card);
+              shiftedCards.push({ card, state, title: displayTitle });
             } else if (pinned) {
-              pinnedCards.push(card);
+              pinnedCards.push({ card, state, title: displayTitle });
             } else {
-              normalCards.push(card);
+              normalCards.push({ card, state, title: displayTitle });
             }
           });
-          const orderedCards = [...pinnedCards, ...shiftedCards, ...normalCards];
+          const sortByStateTitle = (a, b) => {
+            const stateOrder = {1: 0, 0: 1, 2: 2};
+            const aPriority = stateOrder[a.state] ?? 99;
+            const bPriority = stateOrder[b.state] ?? 99;
+            if (aPriority !== bPriority) return aPriority - bPriority;
+            return (a.title || '').localeCompare(b.title || '', 'fr');
+          };
+          const orderedPinned = pinnedCards.sort(sortByStateTitle).map(entry => entry.card);
+          const orderedShifted = shiftedCards.sort(sortByStateTitle).map(entry => entry.card);
+          const orderedNormal = normalCards.sort(sortByStateTitle).map(entry => entry.card);
+          const orderedCards = [...orderedPinned, ...orderedShifted, ...orderedNormal];
           orderedCards.forEach(card => root.appendChild(card));
           cardsAppended = orderedCards.length;
           const filterInfo = getHabitFilterByKey(activeHabitFilter);
@@ -5475,6 +5545,7 @@
         const recurrenceModeRadios = Array.from(document.querySelectorAll('input[name="habitRecurrenceMode"]'));
         const recurrenceIntervalSelect = $("#habitRecurrenceInterval");
         const recurrenceStartDateInput = $("#habitStartDate");
+        const recurrenceEndDateInput = $("#habitEndDate");
         const storedRecurrence = getHabitRecurrenceSetting(activeId) || {};
         const freqValue = Number(it.frequency ?? HABIT_REC[it.id] ?? 3);
         const defaultMode = storedRecurrence.mode === 'interval' ? 'interval' : 'weekly';
@@ -5528,11 +5599,15 @@
           const startDateValue = recurrenceStartDateInput
             ? toIsoDateString(parseDateInput(recurrenceStartDateInput.value) || curDate())
             : toIsoDateString(curDate());
+          const endDateValue = recurrenceEndDateInput && recurrenceEndDateInput.value
+            ? toIsoDateString(parseDateInput(recurrenceEndDateInput.value))
+            : '';
           return {
             mode: normalizedMode,
             days: normalizedMode === 'interval' ? getSelectedRecurrenceDays() : FULL_WEEK_DAYS.slice(),
             intervalWeeks: mode === 'interval' ? intervalWeeks : 1,
-            startDate: startDateValue
+            startDate: startDateValue,
+            endDate: endDateValue
           };
         };
         recurrenceModeRadios.forEach(radio => {
@@ -5556,6 +5631,13 @@
               if (!recurrenceDayInputs.length) return;
             });
             recurrenceStartDateInput.dataset.bound = '1';
+          }
+        }
+        if (recurrenceEndDateInput) {
+          recurrenceEndDateInput.value = storedRecurrence.endDate || '';
+          recurrenceEndDateInput.disabled = !isAdmin;
+          if (!recurrenceEndDateInput.dataset.bound) {
+            recurrenceEndDateInput.dataset.bound = '1';
           }
         }
 
