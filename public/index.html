@@ -2021,6 +2021,65 @@
       padding: 6px 10px
     }
 
+    .rowInline-tight {
+      gap: 6px;
+    }
+
+    .rowWrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .detail-actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .rank-period {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #5f5f5f;
+    }
+
+    .rank-toggle-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .calendar-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .calendar-controls .caption-small {
+      font-size: 12px;
+    }
+
+    .select-compact {
+      padding: 6px;
+    }
+
+    .recurrence-interval {
+      margin-left: 4px;
+    }
+
+    .month-label {
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #5f5f5f;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
     .miniInfo {
       font-size: 12px;
       color: #555
@@ -2219,7 +2278,7 @@
 
     <div class="daysWrap" id="daysWrap">
       <button class="navbtn" id="prevDay">←</button>
-      <div style="display:flex;align-items:center;gap:6px">
+      <div class="rowInline rowInline-tight">
         <div class="dateLabel" id="dateLabel">—</div>
       </div>
       <div class="rightBtns">
@@ -2263,7 +2322,7 @@
               <div class="recurrence-options" id="recurrenceOptions">
                 <label><input type="radio" name="habitRecurrenceMode" value="weekly" checked /> Hebdomadaire</label>
                 <label><input type="radio" name="habitRecurrenceMode" value="interval" /> Toutes les
-                  <select id="habitRecurrenceInterval" class="select" style="margin-left:4px">
+                  <select id="habitRecurrenceInterval" class="select recurrence-interval">
                     <option value="">–</option>
                     <option value="2">2 semaines</option>
                     <option value="3">3 semaines</option>
@@ -2296,7 +2355,7 @@
               </div>
             </div>
 
-            <div style="margin-top:14px;display:flex;justify-content:space-between;gap:8px">
+            <div class="detail-actions">
               <button class="btn danger" id="deleteHabitBtn">Supprimer</button>
               <button class="btn primary" id="saveHabitBtn">Sauvegarder</button>
             </div>
@@ -2360,9 +2419,9 @@
         <div class="view" id="sprofile">
           <div class="rankHeader">
             <b>Durée</b>
-            <div style="font-size:12px;display:flex;gap:8px;align-items:center">
+            <div class="rank-period">
               Période:
-              <div style="display:flex;gap:8px">
+              <div class="rank-toggle-group">
                 <button class="btnToggle" id="sBtnP7">7 jours</button>
                 <button class="btnToggle active" id="sBtnP30">30 jours</button>
                 <button class="btnToggle" id="sBtnPAll">Total</button>
@@ -2374,14 +2433,14 @@
         <div class="view" id="shistory">
           <div class="calendarWrap">
             <div class="calTop">
-              <div style="display:flex;gap:6px;align-items:center">
+              <div class="calendar-controls">
                 <button class="calBtn" id="sPrevMonth">←</button>
-                <div id="sMonthLabel" style="font-weight:700"></div>
+                <div id="sMonthLabel" class="month-label"></div>
                 <button class="calBtn" id="sNextMonth">→</button>
               </div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <span style="font-size:12px">Voir :</span>
-                <select id="sCalWho" class="select" style="padding:6px"></select>
+              <div class="calendar-controls">
+                <span class="caption-small">Voir :</span>
+                <select id="sCalWho" class="select select-compact"></select>
               </div>
             </div>
             <div class="calendar" id="sCal"></div>
@@ -2395,7 +2454,7 @@
                 type="text" /></div>
             <div class="field hide" id="spacePseudoField">
               <label><b>Pseudo</b></label>
-              <div class="rowInline" style="gap:8px">
+              <div class="rowInline">
                 <input id="paramSpacePseudo" type="text" readonly placeholder="doux-mousse-42" />
                 <button type="button" class="btn mini refresh-btn" id="changePseudoBtn"
                   title="Générer un nouveau pseudo">
@@ -2426,13 +2485,13 @@
               </select>
             </div>
             <div class="field owner-controls hide" id="ownerControls">
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="rowWrap">
                 <button class="btn danger" id="deleteSpaceBtn">Supprimer le jardin</button>
               </div>
               <div class="subtitle" id="ownerControlsHint"></div>
             </div>
             <div class="field owner-controls hide" id="guestQuitControls">
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="rowWrap">
                 <button class="btn danger" id="quitSpaceBtn">Quitter le jardin</button>
               </div>
             </div>
@@ -2542,7 +2601,7 @@
             <label><b>Pseudo du jardinier</b></label>
             <input id="invitePseudo" type="text" placeholder="ForetCalme" />
             <div class="subtitle">Ajoute un jardinier déjà inscrit via son pseudo</div>
-            <div style="display:flex;gap:8px;align-items:center">
+            <div class="rowInline">
               <button class="btn primary" id="addMemberByPseudo">Ajouter par pseudo</button>
             </div>
           </div>
@@ -2550,7 +2609,7 @@
             <label><b>Nouveau jardinier</b></label>
             <input id="inviteName" type="text" placeholder="Prénom" />
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div class="rowInline">
             <button class="btn primary" id="generateInvite">Inviter</button>
           </div>
           <div class="subtitle">Liste des invitations </div>
@@ -2569,7 +2628,7 @@
       </div>
       <div class="sheetBody">
         <div class="grid" id="step1"></div>
-        <div class="grid" id="step2" style="display:none"></div>
+        <div class="grid hide" id="step2"></div>
       </div>
     </div>
   </div>
@@ -2618,7 +2677,7 @@
           <div class="field">
             <label><b>Pseudo du jardin</b></label>
             <input id="joinPseudo" type="text" maxlength="16" placeholder="foret01" />
-            <div class="subtitle" style="margin-top:4px;font-size:12px">Le code est fourni dans l’invitation.</div>
+            <div class="subtitle">Le code est fourni dans l’invitation.</div>
           </div>
           <div class="field">
             <div class="rowInlineActions">
@@ -2709,7 +2768,7 @@
     const REPEAT_CONFIGS = {};
 
     /* Utils */
-    const APP_VERSION = '0.0.23';
+    const APP_VERSION = '0.0.25';
     const NEED_EMOJIS = {
       affection: '❤️',
       joy: '😄',
@@ -3810,16 +3869,20 @@
     const STORAGE_ALLOW_FIRESTORE_FROM_LOCAL = 'habitu-allow-firestore-local';
     function isFirestoreAllowedLocally() {
       try {
-        if (!window.localStorage) return true;
+        if (!IS_LOCAL_FILE_URL) return true;
+        if (!window.localStorage) return false;
         const stored = window.localStorage.getItem(STORAGE_ALLOW_FIRESTORE_FROM_LOCAL);
         if (stored === '0') return false;
         if (stored === '1') return true;
       } catch (err) {
         console.warn('isFirestoreAllowedLocally', err);
       }
-      return true;
+      return false;
     }
     const FIRESTORE_ENABLED_LOCALLY = isFirestoreAllowedLocally();
+    function canWriteFirestore() {
+      return Boolean(HABITU_FIREBASE_DB && (!IS_LOCAL_FILE_URL || FIRESTORE_ENABLED_LOCALLY));
+    }
     const activityQueue = new Map();
     const SESSION_COOKIE_NAME = 'habitube-session';
     const SESSION_COOKIE_MAX_AGE = 365 * 24 * 60 * 60 * 1000;
@@ -4198,7 +4261,7 @@
       return true;
     }
     function persistUserProfile(profile) {
-      if (!HABITU_FIREBASE_DB || !profile?.uid) return Promise.resolve();
+      if (!canWriteFirestore() || !profile?.uid) return Promise.resolve();
       const payload = {
         name: profile.name,
         email: profile.email,
@@ -4299,7 +4362,7 @@
       });
     }
     function persistSpaceDoc(spaceId, data = {}) {
-      if (!HABITU_FIREBASE_DB || !spaceId) return Promise.resolve();
+      if (!canWriteFirestore() || !spaceId) return Promise.resolve();
       const space = SPACES[spaceId] || {};
       const members = sanitizeSpaceMembers(space.members);
       const memberSettings = ensureSpaceMemberSettings(space);
@@ -4315,7 +4378,7 @@
     }
 
     function persistHabit(spaceId, habitData) {
-      if (!HABITU_FIREBASE_DB || !spaceId || !habitData?.id) return Promise.resolve();
+      if (!canWriteFirestore() || !spaceId || !habitData?.id) return Promise.resolve();
       habitData.repeatConfig = normalizeRepeatConfig(habitData, habitData.repeatConfig || {});
       ensureHabitMetadata(habitData);
       const habitId = String(habitData.id);
@@ -4327,7 +4390,7 @@
         .catch(e => console.warn('persistHabit', e));
     }
     function persistInviteDoc(token, payload) {
-      if (!HABITU_FIREBASE_DB || !token) return Promise.resolve();
+      if (!canWriteFirestore() || !token) return Promise.resolve();
       const ownerId = payload.ownerId || currentProfile?.uid || null;
       const ownerName = payload.ownerName || currentProfile?.name || userName || 'Un jardinier';
       return HABITU_FIREBASE_DB.collection('invites').doc(token)
@@ -4335,18 +4398,20 @@
         .catch(e => console.warn('persistInvite', e));
     }
     function deleteInviteDoc(token) {
-      if (!HABITU_FIREBASE_DB || !token) return Promise.resolve();
+      if (!canWriteFirestore() || !token) return Promise.resolve();
       delete INVITE_CACHE[token];
       return HABITU_FIREBASE_DB.collection('invites').doc(token).delete().catch(e => console.warn('deleteInvite', e));
     }
     function sendActivityToServer(payload) {
-      if (!HABITU_FIREBASE_DB || (IS_LOCAL_FILE_URL && !FIRESTORE_ENABLED_LOCALLY)) return Promise.resolve();
+      if (!canWriteFirestore()) return Promise.resolve();
       return HABITU_FIREBASE_DB.collection('activities').add(payload).catch(e => console.warn('sendActivity', e));
     }
     function scheduleHabitActivity(habitId, payload) {
       if (!habitId) return;
-      if (IS_LOCAL_FILE_URL && !FIRESTORE_ENABLED_LOCALLY) {
-        console.warn('Skipping Firestore activity log while running from file://');
+      if (!canWriteFirestore()) {
+        if (IS_LOCAL_FILE_URL) {
+          console.warn('Skipping Firestore activity log while running from file://');
+        }
         return;
       }
       const key = `${habitId}:${payload.type}`;
@@ -4355,6 +4420,7 @@
       }
       const actorName = currentProfile?.name || 'Moi';
       const ownerLabel = (payload.owner || getOwnerNameFromEvent(payload) || getCurrentOwnerLabel()).trim();
+      const currentSpaceType = getSpace()?.type || null;
       const targetRecordedAt = payload.recordedAt ? timestampToDate(payload.recordedAt) : null;
       const localRecordedAt = targetRecordedAt || new Date();
       const activityDate = dayKeyFromDate(localRecordedAt);
@@ -4364,6 +4430,7 @@
         ...payload,
         habitId,
         spaceId,
+        spaceType: currentSpaceType,
         userEmail: currentProfile?.email || null,
         userId: currentProfile?.uid || null,
         actorName,
@@ -5071,7 +5138,10 @@
     }
     function getSpaceEvents(spaceId, since = null) {
       if (!spaceId) return [];
+      const normalizedSpaceId = String(spaceId);
       return (SPACE_ACTIVITIES[spaceId] || []).map(evt => {
+        if (!evt) return null;
+        if (evt.spaceId && String(evt.spaceId) !== normalizedSpaceId) return null;
         const recordedAt = timestampToDate(evt.recordedAt);
         if (!recordedAt) return null;
         return { ...evt, recordedAt };
@@ -6427,15 +6497,30 @@
       const currentKey = getCurrentSpaceMemberKey(sp);
       if (currentKey) memberKeys.add(currentKey);
       if (!memberKeys.size) memberKeys.add('__current__');
-      const rows = Array.from(memberKeys).map(key => {
-        const label = getSpaceMemberLabel(sp, key) || ((key === '__current__' || isCurrentMemberKey(key)) ? 'Moi' : 'Un jardinier');
-        return {
+      const memberLabels = new Map();
+      memberKeys.forEach(key => {
+        const label =
+          getSpaceMemberLabel(sp, key) ||
+          ((key === '__current__' || isCurrentMemberKey(key)) ? 'Moi' : 'Un jardinier');
+        if (label) {
+          memberLabels.set(label, {
+            me: key === currentKey || (!currentKey && key === '__current__')
+          });
+        }
+      });
+      const participantLabels = new Set(memberLabels.keys());
+      totals.forEach((_, ownerLabel) => {
+        if (ownerLabel) participantLabels.add(ownerLabel);
+      });
+      const rows = Array.from(participantLabels)
+        .map(label => ({
           n: label,
-          me: key === currentKey || (!currentKey && key === '__current__'),
+          me: memberLabels.get(label)?.me || isCurrentUserLabel(label),
           totalMin: totals.get(label) || 0,
           txt: m2txt(totals.get(label) || 0)
-        };
-      }).filter(row => row.n).sort((a, b) => b.totalMin - a.totalMin);
+        }))
+        .filter(row => row.n)
+        .sort((a, b) => b.totalMin - a.totalMin);
       rows.forEach(({ n, totalMin, txt, me, likes, help }) => {
         const row = document.createElement('div');
         row.className = 'row';
