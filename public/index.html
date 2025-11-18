@@ -2768,7 +2768,7 @@
     const REPEAT_CONFIGS = {};
 
     /* Utils */
-    const APP_VERSION = '0.0.25';
+    const APP_VERSION = '0.0.26';
     const NEED_EMOJIS = {
       affection: '❤️',
       joy: '😄',
@@ -5334,15 +5334,16 @@
             .map(r => (r.owner || '').trim())
             .filter(Boolean)
           ));
-          const gardenerCount = ownerNames.length;
-          gardenerBadge.textContent = `🧑‍🌾${gardenerCount}`;
+          const doneTodayRecords = records.filter(r => (r.state || 0) === 2);
+          const doneTodayCount = doneTodayRecords.length;
+          const gardenerWindowSince = addDays(today, -DEFAULT_GARDENER_WINDOW_DAYS);
+          const gardenerWindowStats = getHabitGardenersStats(it.id, gardenerWindowSince);
+          const windowGardenersCount = gardenerWindowStats.filter(entry => (entry.pastCount || 0) > 0).length;
+          gardenerBadge.textContent = `🧑‍🌾${doneTodayCount}/${windowGardenersCount}`;
           gardenerBadge.dataset.habitId = String(it.id);
-          if (!gardenerCount) {
-            gardenerBadge.classList.add('gardener-badge--empty');
-          }
+          gardenerBadge.classList.toggle('gardener-badge--empty', doneTodayCount === 0);
           gardenerBadge.addEventListener('click', (event) => {
             event.stopPropagation();
-            if (!gardenerCount) return;
             openDetail(it.id, btn, 'gardeners');
           });
           btn.dataset.ownerList = JSON.stringify(ownerNames);
@@ -5524,7 +5525,7 @@
       const sp = getSpace();
       events.forEach(event => {
         if (String(event.habitId) !== String(habitId)) return;
-        if ((event.state || 0) < 1) return;
+        if ((event.state || 0) !== 2) return;
         const recordedAt = timestampToDate(event.recordedAt);
         if (!recordedAt) return;
         const ownerLabel = getOwnerNameFromEvent(event);
@@ -6306,6 +6307,10 @@
           const customName = (nameInput?.value || '').trim();
           if (currentKey) {
             await updateSpaceMemberName(spaceId, currentKey, customName, { persist: false });
+          }
+          const ownerKey = sp ? normalizeMemberKey(sp.ownerId || '') : '';
+          if (ownerKey && ownerKey !== currentKey) {
+            await updateSpaceMemberName(spaceId, ownerKey, customName, { persist: false });
           }
           await persistSpaceDoc(spaceId);
           showToast('Réglages sauvegardés.', { type: 'success' });
