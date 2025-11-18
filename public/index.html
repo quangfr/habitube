@@ -2474,8 +2474,8 @@
         <div class="grid">
           <div class="opt" id="addHabit">
             <div class="emoji">🌱</div>
-            <div><b>Semer des routines</b>
-              <div class="subtitle">Démarrer des nouvelles habitudes</div>
+            <div><b>Semer des graines</b>
+              <div class="subtitle">Démarrer des nouvelles graines</div>
             </div>
           </div>
           <div class="opt" id="inviteFriend">
@@ -2541,7 +2541,7 @@
           <div class="field">
             <label><b>Pseudo du jardinier</b></label>
             <input id="invitePseudo" type="text" placeholder="ForetCalme" />
-            <div class="subtitle">Ajoute un jardinier déjà inscrit via son pseudo Habitube.</div>
+            <div class="subtitle">Ajoute un jardinier déjà inscrit via son pseudo</div>
             <div style="display:flex;gap:8px;align-items:center">
               <button class="btn primary" id="addMemberByPseudo">Ajouter par pseudo</button>
             </div>
@@ -2709,7 +2709,7 @@
     const REPEAT_CONFIGS = {};
 
     /* Utils */
-    const APP_VERSION = '0.0.22';
+    const APP_VERSION = '0.0.23';
     const NEED_EMOJIS = {
       affection: '❤️',
       joy: '😄',
@@ -4108,17 +4108,28 @@
     function dayKeyFromDate(date) {
       return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     }
+    function getEventDayKey(event) {
+      if (!event) return '';
+      if (event.activityDate) {
+        return event.activityDate;
+      }
+      const recordedAt = timestampToDate(event.recordedAt);
+      if (!recordedAt) return '';
+      return dayKeyFromDate(recordedAt);
+    }
     function upsertLocalHabitActivity(event) {
       if (!event || !event.spaceId || !event.habitId) return;
       const owner = event.owner || getOwnerNameFromEvent(event);
       if (!owner) return;
       const recordedAt = timestampToDate(event.recordedAt) || new Date();
-      const key = `${owner}:${event.habitId}:${dayKeyFromDate(recordedAt)}`;
+      const dayKey = event.activityDate || dayKeyFromDate(recordedAt);
+      const key = `${owner}:${event.habitId}:${dayKey}`;
       const bucket = SPACE_ACTIVITIES[event.spaceId] || [];
       const idx = bucket.findIndex(ev => {
         const existingOwner = ev.owner || getOwnerNameFromEvent(ev);
         if (!existingOwner) return false;
-        return `${existingOwner}:${ev.habitId}:${dayKeyFromDate(timestampToDate(ev.recordedAt) || new Date(0))}` === key;
+        const existingDayKey = ev.activityDate || dayKeyFromDate(timestampToDate(ev.recordedAt) || new Date(0));
+        return `${existingOwner}:${ev.habitId}:${existingDayKey}` === key;
       });
       const stored = { ...event, recordedAt };
       if (idx === -1) {
@@ -4130,6 +4141,37 @@
         }
       }
       SPACE_ACTIVITIES[event.spaceId] = bucket;
+    }
+    function computeActorCountsForEvent(event) {
+      if (!event || !event.spaceId || !event.habitId) {
+        return { window: 0, total: 0 };
+      }
+      const ownerLabel = event.owner || getOwnerNameFromEvent(event);
+      if (!ownerLabel) {
+        return { window: 0, total: 0 };
+      }
+      const normalizedOwner = normalizeOwnerLabel(ownerLabel);
+      if (!normalizedOwner) {
+        return { window: 0, total: 0 };
+      }
+      const sinceDate = addDays(curDate(), -DEFAULT_GARDENER_WINDOW_DAYS);
+      const events = getSpaceEvents(event.spaceId);
+      const windowDays = new Set();
+      const totalDays = new Set();
+      events.forEach(ev => {
+        if (String(ev.habitId) !== String(event.habitId)) return;
+        const owner = getOwnerNameFromEvent(ev);
+        if (normalizeOwnerLabel(owner) !== normalizedOwner) return;
+        const dayKey = getEventDayKey(ev);
+        if (!dayKey) return;
+        totalDays.add(dayKey);
+        const recordedAt = timestampToDate(ev.recordedAt);
+        if (!recordedAt) return;
+        if (!sinceDate || recordedAt >= sinceDate) {
+          windowDays.add(dayKey);
+        }
+      });
+      return { window: windowDays.size, total: totalDays.size };
     }
     function isCurrentSpaceAdmin() {
       const sp = getSpace();
@@ -4312,20 +4354,43 @@
         clearTimeout(activityQueue.get(key));
       }
       const actorName = currentProfile?.name || 'Moi';
-      const localRecordedAt = new Date();
+      const ownerLabel = (payload.owner || getOwnerNameFromEvent(payload) || getCurrentOwnerLabel()).trim();
       const targetRecordedAt = payload.recordedAt ? timestampToDate(payload.recordedAt) : null;
-      const serverRecordedAt = targetRecordedAt ? firebase.firestore.Timestamp.fromDate(targetRecordedAt) : firebase.firestore.FieldValue.serverTimestamp();
-      const eventData = {
+      const localRecordedAt = targetRecordedAt || new Date();
+      const activityDate = dayKeyFromDate(localRecordedAt);
+      const loggedAtLocal = new Date();
+      const actorPseudo = currentProfile?.pseudo || '';
+      const baseEvent = {
         ...payload,
         habitId,
         spaceId,
         userEmail: currentProfile?.email || null,
         userId: currentProfile?.uid || null,
         actorName,
-        recordedAt: serverRecordedAt
+        owner: ownerLabel,
+        actorPseudo,
+        activityDate
       };
-      const localEvent = { ...eventData, recordedAt: targetRecordedAt || localRecordedAt };
+      const serverRecordedAt = targetRecordedAt
+        ? firebase.firestore.Timestamp.fromDate(targetRecordedAt)
+        : firebase.firestore.FieldValue.serverTimestamp();
+      const eventData = {
+        ...baseEvent,
+        recordedAt: serverRecordedAt,
+        loggedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const localEvent = {
+        ...baseEvent,
+        recordedAt: localRecordedAt,
+        loggedAt: loggedAtLocal
+      };
       if (payload.type === 'realization') {
+        upsertLocalHabitActivity(localEvent);
+        const counts = computeActorCountsForEvent(localEvent);
+        localEvent.actor30DaysCount = counts.window;
+        localEvent.actorTotalCount = counts.total;
+        eventData.actor30DaysCount = counts.window;
+        eventData.actorTotalCount = counts.total;
         upsertLocalHabitActivity(localEvent);
       }
       const timer = setTimeout(() => {
@@ -5019,7 +5084,8 @@
       events.forEach(event => {
         const owner = getOwnerNameFromEvent(event);
         if (ownerFilter !== '__all__' && owner !== ownerFilter) return;
-        const key = `${owner}:${event.habitId}:${dayKeyFromDate(event.recordedAt)}`;
+        const dayKey = getEventDayKey(event);
+        const key = `${owner}:${event.habitId}:${dayKey}`;
         const prev = map.get(key);
         if (!prev || event.recordedAt > prev.recordedAt) {
           map.set(key, { ...event, owner });
@@ -5032,7 +5098,8 @@
       const map = new Map();
       events.forEach(event => {
         const owner = getOwnerNameFromEvent(event);
-        const key = `${owner}:${event.habitId}:${dayKeyFromDate(event.recordedAt)}`;
+        const dayKey = getEventDayKey(event);
+        const key = `${owner}:${event.habitId}:${dayKey}`;
         const prev = map.get(key);
         if (!prev || event.recordedAt > prev.recordedAt) {
           map.set(key, { ...event, owner });
@@ -5393,7 +5460,7 @@
         const ownerLabel = getOwnerNameFromEvent(event);
         const actorName = event.actorName || event.ownerName || '';
         const fallback = displayNameFromEmail(event.userEmail);
-        const pseudoCandidate = ((event.owner || ownerLabel || fallback || '').trim());
+        const pseudoCandidate = ((event.actorPseudo || event.owner || ownerLabel || fallback || '').trim());
         if (!pseudoCandidate) return;
         const normalizedOwner = normalizeOwnerLabel(pseudoCandidate);
         if (!normalizedOwner) return;
@@ -5411,7 +5478,8 @@
             totalDays: new Set(),
             windowDays: new Set(),
             userEmails: new Set(),
-            userIds: new Set()
+            userIds: new Set(),
+            lastRecordedAt: 0
           };
           stats.set(normalizedOwner, entry);
         }
@@ -5424,12 +5492,30 @@
         if (event.userId) {
           entry.userIds.add(String(event.userId));
         }
-        const dayKey = dayKeyFromDate(recordedAt);
-        entry.totalDays.add(dayKey);
-        if (!sinceDate || recordedAt >= sinceDate) {
-          entry.windowDays.add(dayKey);
+        const dayKey = getEventDayKey(event);
+        if (dayKey) {
+          entry.totalDays.add(dayKey);
+          if (!sinceDate || recordedAt >= sinceDate) {
+            entry.windowDays.add(dayKey);
+          }
         }
         entry.totalMinutes += minutesPerCompletion;
+        const eventTimestamp = recordedAt.getTime();
+        if (!entry.lastRecordedAt || eventTimestamp >= entry.lastRecordedAt) {
+          entry.lastRecordedAt = eventTimestamp;
+          if (Number.isFinite(Number(event.actor30DaysCount))) {
+            entry.actor30DaysCount = Number(event.actor30DaysCount);
+          }
+          if (Number.isFinite(Number(event.actorTotalCount))) {
+            entry.actorTotalCount = Number(event.actorTotalCount);
+          }
+          if (event.actorPseudo) {
+            entry.pseudo = event.actorPseudo;
+          } else {
+            entry.pseudo = pseudoCandidate;
+          }
+          entry.ownerLabel = pseudoCandidate;
+        }
       });
       return Array.from(stats.values()).map(entry => ({
         ownerLabel: entry.ownerLabel,
@@ -5438,8 +5524,8 @@
         normalizedOwner: entry.normalizedOwner,
         userEmails: entry.userEmails,
         userIds: entry.userIds,
-        pastCount: entry.windowDays.size,
-        totalCount: entry.totalDays.size,
+        pastCount: entry.actor30DaysCount ?? entry.windowDays.size,
+        totalCount: entry.actorTotalCount ?? entry.totalDays.size,
         minutes: entry.totalMinutes
       }));
     }
