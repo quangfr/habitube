@@ -2115,32 +2115,30 @@
 
     .toast {
       padding: 10px 18px;
-      border-radius: 999px;
-      min-width: 220px;
-      max-width: 320px;
+      border-radius: 6px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: fit-content;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
       font-size: 13px;
-      color: #111;
-      background: #f4f4f4;
+      color: #1f824d;
+      background: #def7ec;
       opacity: 0;
       animation: toastIn 0.3s forwards;
       white-space: nowrap;
       text-align: center;
     }
 
-    .toast.toast-success {
+    .toast.toast-success,
+    .toast.toast-error,
+    .toast.toast-info {
       background: #def7ec;
       color: #1f824d;
     }
 
-    .toast.toast-error {
-      background: #ffe0e0;
-      color: #a32020;
-    }
-
-    .toast.toast-info {
-      background: #e1edff;
-      color: #1a3e86;
+    .toast.toast-out {
+      animation: toastOut 0.25s forwards;
     }
 
     @keyframes toastIn {
@@ -2152,6 +2150,18 @@
       to {
         opacity: 1;
         transform: translateY(0);
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(-6px);
       }
     }
 
@@ -2455,22 +2465,20 @@
             <div class="field hide" id="spacePseudoField">
               <label><b>Pseudo</b></label>
               <div class="rowInline">
-                <input id="paramSpacePseudo" type="text" readonly placeholder="doux-mousse-42" />
-                <button type="button" class="btn mini refresh-btn" id="changePseudoBtn"
-                  title="Générer un nouveau pseudo">
-                  ⟲
-                </button>
+                <input id="paramSpacePseudo" type="text" readonly placeholder="AloeCalme" />
               </div>
               <div class="subtitle">Ton pseudo est visible dans ton espace individuel.</div>
             </div>
-            <div class="field hide" id="spaceVisibilityField">
-              <label><b>Visibilité</b></label>
-              <select id="paramVisibility" class="select">
-                <option value="public">Public</option>
-                <option value="private">Privée</option>
-                <option value="anonymous">Anonyme</option>
-              </select>
-              <div class="subtitle" id="spaceVisibilityHint"></div>
+            <div class="field hide" id="spaceProfileModeField">
+              <label><b>Profil</b></label>
+              <div class="rowInline">
+                <select id="paramProfileMode" class="select">
+                  <option value="local">Local</option>
+                  <option value="minimal">Minimal</option>
+                  <option value="complet">Complet</option>
+                </select>
+              </div>
+              <div class="subtitle" id="profileModeHint"></div>
             </div>
             <div class="field" id="spaceIntroField">
               <label><b>Texte d'introduction</b></label>
@@ -2500,9 +2508,6 @@
               <button class="btn danger hide" id="deleteAccountBtn">Supprimer mon compte</button>
             </div>
             <div class="subtitle" id="spaceSettingsNotice"></div>
-            <div class="subtitle hide" id="personalDeleteHint">
-              Supprimer ton compte supprime ton espace individuel et te déconnecte.
-            </div>
           </div>
         </div>
         <div class="view" id="sprefs">
@@ -2510,7 +2515,7 @@
             <div class="field">
               <label><b>Afficher les astuces</b></label>
               <select id="prefsTipsDisplayMode" class="select">
-                <option value="auto">Auto (en cours seulement)</option>
+                <option value="auto">Auto</option>
                 <option value="oui">Oui</option>
                 <option value="non">Non</option>
               </select>
@@ -2534,7 +2539,7 @@
           <div class="opt" id="addHabit">
             <div class="emoji">🌱</div>
             <div><b>Semer des graines</b>
-              <div class="subtitle">Démarrer des nouvelles graines</div>
+              <div class="subtitle">Démarrer des nouvelles routines</div>
             </div>
           </div>
           <div class="opt" id="inviteFriend">
@@ -2647,9 +2652,9 @@
             <input id="gardenNameInput" type="text" placeholder="Nom du jardin" />
           </div>
           <div class="field">
-            <label><b>Pseudo du jardin</b></label>
-            <input id="gardenPseudoInput" type="text" placeholder="Pseudo du jardin" />
-            <div class="subtitle">Le pseudo est utilisé dans les invitations et les partages.</div>
+            <label><b>Identifiant du jardin</b></label>
+            <input id="gardenPseudoInput" type="text" placeholder="Identifiant du jardin" />
+            <div class="subtitle">L'identifiant est utilisé dans les invitations et les partages.</div>
           </div>
           <div class="field">
             <div class="rowInlineActions">
@@ -2675,15 +2680,52 @@
             <input id="joinName" type="text" placeholder="Ton prénom" />
           </div>
           <div class="field">
-            <label><b>Pseudo du jardin</b></label>
+            <label><b>Identifiant du jardin</b></label>
             <input id="joinPseudo" type="text" maxlength="16" placeholder="foret01" />
-            <div class="subtitle">Le code est fourni dans l’invitation.</div>
           </div>
           <div class="field">
             <div class="rowInlineActions">
               <button class="btn primary" id="joinSpaceBtn">Rejoindre</button>
             </div>
             <div class="subtitle" id="joinStatus"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal profile-setup" id="modalProfileSetup">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div>Profil</div>
+      </div>
+      <div class="sheetBody">
+        <div class="grid">
+          <div class="field">
+            <label><b>Profil</b></label>
+            <select id="profileModeSelector" class="select">
+              <option value="local">Local</option>
+              <option value="minimal">Minimal</option>
+              <option value="complet">Complet</option>
+            </select>
+            <div class="subtitle" id="profileModeSetupHint"></div>
+          </div>
+          <div class="field hide" id="profileNameField">
+            <label><b>Prénom</b></label>
+            <input id="profileNameInput" type="text" placeholder="Moi" />
+          </div>
+          <div class="field hide" id="profilePseudoField">
+            <label><b>Pseudo</b></label>
+            <div class="rowInline">
+              <input id="profilePseudoInput" type="text" placeholder="doux-mousse-42" />
+              <button type="button" class="btn mini refresh-btn" id="profilePseudoRefresh"
+                title="Générer un nouveau pseudo">
+                ⟲
+              </button>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="btn primary" id="profileSetupContinue">Commencer</button>
           </div>
         </div>
       </div>
@@ -2768,7 +2810,7 @@
     const REPEAT_CONFIGS = {};
 
     /* Utils */
-    const APP_VERSION = '0.0.28';
+    const APP_VERSION = '0.0.34';
     const NEED_EMOJIS = {
       affection: '❤️',
       joy: '😄',
@@ -2916,14 +2958,12 @@
         });
       }
       const isPinned = btn.dataset.pinned === '1';
-      addOption(isPinned ? 'Détacher' : 'Épingler', () => {
-        hideCardContextMenu();
-        if (isPinned) {
-          unpinHabitAction(habit.id);
-        } else {
+      if (!isPinned) {
+        addOption('Épingler', () => {
+          hideCardContextMenu();
           pinHabitAction(habit.id);
-        }
-      });
+        });
+      }
       const isHidden = isHabitHidden(habit.id);
       if (isHidden) {
         addOption('Reprendre', () => {
@@ -2931,25 +2971,7 @@
           showHabit(habit.id);
         });
       }
-      const shiftKey = getPostponedHabitDate(habit.id);
-      const tomorrowKey = getTomorrowKey();
-      const isShifted = shiftKey === tomorrowKey;
-      const state = Number(btn.dataset.state || 0);
-      const isDone = state >= 2;
-      if (isShifted) {
-        addOption('Revenir à la veille', () => {
-          hideCardContextMenu();
-          toggleShiftForHabit(habit.id);
-        });
-      } else {
-        if (!isHidden && !isDone) {
-          addOption('Décaler', () => {
-            hideCardContextMenu();
-            toggleShiftForHabit(habit.id);
-          });
-        }
-      }
-      if (!isHidden && !isShifted) {
+      if (!isHidden) {
         addOption('Suspendre', () => {
           hideCardContextMenu();
           hideHabit(habit.id);
@@ -3055,25 +3077,6 @@
       libre: { label: 'Individuel', shortLabel: 'Moi 👤', emoji: '👤', target: 'individual' },
       commun: { label: 'Partagé', shortLabel: 'Tout le monde 👥', emoji: '👥', target: 'group' }
     };
-    const DEFAULT_VISIBILITY = 'public';
-    const VISIBILITY_OPTIONS = {
-      public: {
-        label: 'Public',
-        summary: 'Tu partages ton pseudo et vois ceux des publics qui font les mêmes activités.'
-      },
-      private: {
-        label: 'Privée',
-        summary: 'Tu ne partages qu’avec les pseudos que tu as ajoutés.'
-      },
-      anonymous: {
-        label: 'Anonyme',
-        summary: 'Les activités restent seulement sur ton appareil pour l’instant.'
-      }
-    };
-    function describeVisibility(mode) {
-      const key = (mode || '').toString().toLowerCase();
-      return VISIBILITY_OPTIONS[key]?.summary || VISIBILITY_OPTIONS[DEFAULT_VISIBILITY].summary;
-    }
     const PSEUDO_LIBRARY_MAX_ATTEMPTS = 6;
     function sanitizePseudo(value) {
       const input = (value || '').toString();
@@ -3530,7 +3533,7 @@
       }
       return toastContainerEl;
     }
-    function showToast(message, { type = 'info', duration = 4000 } = {}) {
+    function showToast(message, { type = 'info', duration = 1500 } = {}) {
       if (!message) return;
       const container = ensureToastContainer();
       if (!container) return;
@@ -3538,6 +3541,10 @@
       toast.className = `toast toast-${type}`;
       toast.textContent = message;
       container.appendChild(toast);
+      const exitDelay = Math.max(duration - 250, 0);
+      setTimeout(() => {
+        toast.classList.add('toast-out');
+      }, exitDelay);
       setTimeout(() => {
         toast.remove();
       }, duration);
@@ -3856,6 +3863,7 @@
     const INVITE_CACHE = {};
     const STORAGE_USER_PROFILE = 'habitu-user-profile';
     const STORAGE_GUEST_SPACES = 'habitu-guest-spaces';
+    const STORAGE_PROFILE_SETUP_KEY = 'habitu-profile-setup-done';
     const GARDEN_TYPES = [
       { emoji: '🏠', label: '🏠 Colocation', type: 'group', desc: 'Petites routines partagées à la maison.' },
       { emoji: '🌞', label: '🌞 Famille', type: 'group', desc: 'Rituels doux pour toute la famille.' },
@@ -3887,6 +3895,71 @@
     const FIRESTORE_ENABLED_LOCALLY = isFirestoreAllowedLocally();
     function canWriteFirestore() {
       return Boolean(HABITU_FIREBASE_DB && (!IS_LOCAL_FILE_URL || FIRESTORE_ENABLED_LOCALLY));
+    }
+    const PROFILE_MODE_INFO = {
+      local: {
+        label: 'Local',
+        summary: 'Toutes les données restent sur l’appareil : pas de synchronisation, ni de badges ou classements.'
+      },
+      minimal: {
+        label: 'Minimal',
+        summary: 'Seuls les espaces sont envoyés. Les badges sont visibles, les classements sont masqués.'
+      },
+      complet: {
+        label: 'Complet',
+        summary: 'Tout est synchronisé, les statistiques et classements sont actifs.'
+      }
+    };
+    const DEFAULT_PROFILE_MODE = 'complet';
+    function getProfileMode(profile = currentProfile) {
+      const candidate = (profile?.profileMode || '').toString().toLowerCase();
+      if (PROFILE_MODE_INFO[candidate]) {
+        return candidate;
+      }
+      return DEFAULT_PROFILE_MODE;
+    }
+    function isProfileModeLocal(profile = currentProfile) {
+      return getProfileMode(profile) === 'local';
+    }
+    function isProfileModeMinimal(profile = currentProfile) {
+      return getProfileMode(profile) === 'minimal';
+    }
+    function isProfileModeComplet(profile = currentProfile) {
+      return getProfileMode(profile) === 'complet';
+    }
+    function shouldWriteToFirestore(profile = currentProfile) {
+      return Boolean(canWriteFirestore() && !isProfileModeLocal(profile));
+    }
+    function shouldSyncActivities(profile = currentProfile) {
+      return Boolean(shouldWriteToFirestore(profile) && isProfileModeComplet(profile));
+    }
+    function shouldRenderRankings() {
+      return isProfileModeComplet();
+    }
+    function shouldShowGardenerBadges() {
+      return !isProfileModeLocal();
+    }
+    async function updateProfileMode(mode = DEFAULT_PROFILE_MODE) {
+      const normalized = PROFILE_MODE_INFO[mode] ? mode : DEFAULT_PROFILE_MODE;
+      const updated = { ...(currentProfile || {}), profileMode: normalized };
+      persistProfile(updated);
+      if (shouldWriteToFirestore(updated)) {
+        await persistUserProfile({
+          uid: updated.uid,
+          email: updated.email,
+          name: updated.name,
+          pseudo: updated.pseudo,
+          tipsDisplayMode: updated.tipsDisplayMode,
+          pinnedHabits: updated.pinnedHabits,
+          postponedHabits: updated.postponedHabits,
+          forgottenHabits: updated.forgottenHabits,
+          showFriendBadges: updated.showFriendBadges,
+          profileMode: normalized
+        });
+      }
+      renderCards();
+      renderSpaceRank();
+      renderHabitGardeners();
     }
     const activityQueue = new Map();
     const SESSION_COOKIE_NAME = 'habitube-session';
@@ -3926,6 +3999,7 @@
     }
     function persistProfile(profile) {
       if (!profile) {
+        safeStorageSet(STORAGE_PROFILE_SETUP_KEY, '0');
         localStorage.removeItem(STORAGE_USER_PROFILE);
         currentProfile = null;
         clearSessionCookie();
@@ -3933,6 +4007,9 @@
         return;
       }
       const nextProfile = { ...(currentProfile || {}), ...profile };
+      if (!PROFILE_MODE_INFO[nextProfile.profileMode]) {
+        nextProfile.profileMode = DEFAULT_PROFILE_MODE;
+      }
       localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(nextProfile));
       currentProfile = nextProfile;
       setSessionCookie();
@@ -4266,7 +4343,7 @@
       return true;
     }
     function persistUserProfile(profile) {
-      if (!canWriteFirestore() || !profile?.uid) return Promise.resolve();
+      if (!shouldWriteToFirestore(profile) || !profile?.uid) return Promise.resolve();
       const payload = {
         name: profile.name,
         email: profile.email,
@@ -4294,8 +4371,8 @@
           payload.pseudoNormalized = normalizedPseudo.toLowerCase();
         }
       }
-      if (profile.visibility !== undefined) {
-        payload.visibility = profile.visibility;
+      if (profile.profileMode !== undefined) {
+        payload.profileMode = profile.profileMode;
       }
       return HABITU_FIREBASE_DB.collection('users').doc(profile.uid)
         .set(payload, { merge: true })
@@ -4340,25 +4417,6 @@
         email: updated.email,
         name: updated.name,
         pseudo: normalized,
-        visibility: updated.visibility,
-        tipsDisplayMode: updated.tipsDisplayMode,
-        pinnedHabits: updated.pinnedHabits,
-        postponedHabits: updated.postponedHabits,
-        forgottenHabits: updated.forgottenHabits,
-        showFriendBadges: updated.showFriendBadges
-      });
-    }
-    async function updateUserVisibility(mode) {
-      if (!currentProfile) return;
-      const normalized = VISIBILITY_OPTIONS[mode] ? mode : DEFAULT_VISIBILITY;
-      const updated = { ...currentProfile, visibility: normalized };
-      persistProfile(updated);
-      await persistUserProfile({
-        uid: updated.uid,
-        email: updated.email,
-        name: updated.name,
-        pseudo: updated.pseudo,
-        visibility: normalized,
         tipsDisplayMode: updated.tipsDisplayMode,
         pinnedHabits: updated.pinnedHabits,
         postponedHabits: updated.postponedHabits,
@@ -4367,7 +4425,7 @@
       });
     }
     function persistSpaceDoc(spaceId, data = {}) {
-      if (!canWriteFirestore() || !spaceId) return Promise.resolve();
+      if (!shouldWriteToFirestore() || !spaceId) return Promise.resolve();
       const space = SPACES[spaceId] || {};
       const members = sanitizeSpaceMembers(space.members);
       const memberSettings = ensureSpaceMemberSettings(space);
@@ -4383,7 +4441,7 @@
     }
 
     function persistHabit(spaceId, habitData) {
-      if (!canWriteFirestore() || !spaceId || !habitData?.id) return Promise.resolve();
+      if (!shouldWriteToFirestore() || !spaceId || !habitData?.id) return Promise.resolve();
       habitData.repeatConfig = normalizeRepeatConfig(habitData, habitData.repeatConfig || {});
       ensureHabitMetadata(habitData);
       const habitId = String(habitData.id);
@@ -4395,7 +4453,7 @@
         .catch(e => console.warn('persistHabit', e));
     }
     function persistInviteDoc(token, payload) {
-      if (!canWriteFirestore() || !token) return Promise.resolve();
+      if (!shouldWriteToFirestore() || !token) return Promise.resolve();
       const ownerId = payload.ownerId || currentProfile?.uid || null;
       const ownerName = payload.ownerName || currentProfile?.name || userName || 'Un jardinier';
       return HABITU_FIREBASE_DB.collection('invites').doc(token)
@@ -4403,22 +4461,16 @@
         .catch(e => console.warn('persistInvite', e));
     }
     function deleteInviteDoc(token) {
-      if (!canWriteFirestore() || !token) return Promise.resolve();
+      if (!shouldWriteToFirestore() || !token) return Promise.resolve();
       delete INVITE_CACHE[token];
       return HABITU_FIREBASE_DB.collection('invites').doc(token).delete().catch(e => console.warn('deleteInvite', e));
     }
     function sendActivityToServer(payload) {
-      if (!canWriteFirestore()) return Promise.resolve();
+      if (!shouldSyncActivities()) return Promise.resolve();
       return HABITU_FIREBASE_DB.collection('activities').add(payload).catch(e => console.warn('sendActivity', e));
     }
     function scheduleHabitActivity(habitId, payload) {
-      if (!habitId) return;
-      if (!canWriteFirestore()) {
-        if (IS_LOCAL_FILE_URL) {
-          console.warn('Skipping Firestore activity log while running from file://');
-        }
-        return;
-      }
+      if (!habitId || !payload) return;
       const key = `${habitId}:${payload.type}`;
       if (activityQueue.has(key)) {
         clearTimeout(activityQueue.get(key));
@@ -4464,6 +4516,12 @@
         eventData.actor30DaysCount = counts.window;
         eventData.actorTotalCount = counts.total;
         upsertLocalHabitActivity(localEvent);
+      }
+      if (!shouldSyncActivities()) {
+        if (IS_LOCAL_FILE_URL) {
+          console.warn('Skipping Firestore activity log while running from file:// or profile settings');
+        }
+        return;
       }
       const timer = setTimeout(() => {
         sendActivityToServer(eventData);
@@ -4925,13 +4983,6 @@
       if (!habitId) return false;
       return getHiddenHabits().includes(String(habitId));
     }
-    function getPostponedHabitsMap() {
-      return normalizePostponedMap(currentProfile?.postponedHabits);
-    }
-    function getPostponedHabitDate(habitId) {
-      if (!habitId) return '';
-      return getPostponedHabitsMap()[String(habitId)] || '';
-    }
     async function persistHabitProfileFields(fields = {}) {
       const payloadFields = {};
       let hasField = false;
@@ -5050,25 +5101,6 @@
     }
     function shouldShowContextMenuEdit() {
       return hasEditPermission();
-    }
-    function getTomorrowKey() {
-      const tomorrow = addDays(curDate(), 1);
-      return dayKeyFromDate(tomorrow);
-    }
-    function toggleShiftForHabit(habitId) {
-      if (!habitId) return;
-      const targetKey = getTomorrowKey();
-      const map = getPostponedHabitsMap();
-      const next = { ...map };
-      if (next[habitId] === targetKey) {
-        delete next[habitId];
-        showToast('Décalage annulé.');
-      } else {
-        next[habitId] = targetKey;
-        showToast('Habitude décalée à demain.');
-      }
-      persistHabitProfileFields({ postponedHabits: next }).catch(() => { });
-      renderCards();
     }
     function hideHabit(habitId) {
       if (!habitId) return;
@@ -5308,8 +5340,6 @@
       const personalRecords = getPersonalActivityRecords(DEFAULT_GARDENER_WINDOW_DAYS);
       const selectedDayKey = dayKeyFromDate(today);
       const viewTipSeed = getDescTipSeed(today);
-      const todayKey = dayKeyFromDate(today);
-      cleanupPostponedHabits(todayKey);
       const items = pickVisibleList(listChallenges());
       items.sort((a, b) => {
         const aMode = (HABIT_MODE[a.id] || {}).type;
@@ -5327,20 +5357,13 @@
       } else {
         let cardsAppended = 0;
         const pinnedCards = [];
-        const shiftedCards = [];
         const normalCards = [];
         items.forEach(it => {
           if (DELETED_HABITS.has(it.id)) return;
           const pinned = isHabitPinned(it.id);
-          const shiftKey = getPostponedHabitDate(it.id);
-          const isShiftedToday = shiftKey === todayKey;
-          const isShiftedAway = shiftKey && !isShiftedToday;
           ensureHabit(it.id);
           const scheduledToday = shouldOccurOnDate(it, today);
-          const visibleToday = isShiftedToday || (scheduledToday && !isShiftedAway);
-          if (isShiftedAway) {
-            return;
-          }
+          const visibleToday = scheduledToday;
           const isHiddenHabit = isHabitHidden(it.id);
 
           const card = document.createElement('article');
@@ -5356,8 +5379,7 @@
           const mode = HABIT_MODE[it.id] || { type: 'libre' };
           const displayTitle = habitLabel(it);
           const pinPrefix = pinned ? '📌 ' : '';
-          const shiftPrefix = isShiftedToday ? '⏳ ' : '';
-          left.innerHTML = `<span class="base">${shiftPrefix}${pinPrefix}${displayTitle}</span>`;
+          left.innerHTML = `<span class="base">${pinPrefix}${displayTitle}</span>`;
           title.append(left);
           const recurrenceLabel = buildHabitRecurrenceLabel(it);
           if (recurrenceLabel) {
@@ -5372,10 +5394,12 @@
           const descText = document.createElement('span');
           descText.className = 'desc-text';
           desc.appendChild(descText);
-          const gardenerBadge = document.createElement('button');
-          gardenerBadge.type = 'button';
-          gardenerBadge.className = 'gardener-badge';
-          desc.appendChild(gardenerBadge);
+          const gardenerBadge = shouldShowGardenerBadges() ? document.createElement('button') : null;
+          if (gardenerBadge) {
+            gardenerBadge.type = 'button';
+            gardenerBadge.className = 'gardener-badge';
+            desc.appendChild(gardenerBadge);
+          }
           setupDesc(desc, it.id, { tipSeed: viewTipSeed });
 
           const friends = document.createElement('div');
@@ -5430,13 +5454,15 @@
           );
           const doneTodayCount = doneTodayOwners.size;
           const windowGardenersCount = windowGardeners.size;
-          gardenerBadge.textContent = `🧑‍🌾${doneTodayCount}/${windowGardenersCount}`;
-          gardenerBadge.dataset.habitId = String(it.id);
-          gardenerBadge.classList.toggle('gardener-badge--empty', doneTodayCount === 0);
-          gardenerBadge.addEventListener('click', (event) => {
-            event.stopPropagation();
-            openDetail(it.id, btn, 'gardeners');
-          });
+          if (gardenerBadge) {
+            gardenerBadge.textContent = `🧑‍🌾${doneTodayCount}/${windowGardenersCount}`;
+            gardenerBadge.dataset.habitId = String(it.id);
+            gardenerBadge.classList.toggle('gardener-badge--empty', doneTodayCount === 0);
+            gardenerBadge.addEventListener('click', (event) => {
+              event.stopPropagation();
+              openDetail(it.id, btn, 'gardeners');
+            });
+          }
           btn.dataset.ownerList = JSON.stringify(ownerNames);
           const baseMin = BASE_MINUTES[it.id] || 15;
           const ownerState = ownerRecord?.state ?? 0;
@@ -5572,9 +5598,7 @@
           col.append(btn);
           card.append(col, cont);
           attachCardContextHandlers(card, btn, it);
-          if (isShiftedToday) {
-            shiftedCards.push({ card, state, title: displayTitle });
-          } else if (pinned) {
+          if (pinned) {
             pinnedCards.push({ card, state, title: displayTitle });
           } else {
             normalCards.push({ card, state, title: displayTitle });
@@ -5588,9 +5612,8 @@
           return (a.title || '').localeCompare(b.title || '', 'fr');
         };
         const orderedPinned = pinnedCards.sort(sortByStateTitle).map(entry => entry.card);
-        const orderedShifted = shiftedCards.sort(sortByStateTitle).map(entry => entry.card);
         const orderedNormal = normalCards.sort(sortByStateTitle).map(entry => entry.card);
-        const orderedCards = [...orderedPinned, ...orderedShifted, ...orderedNormal];
+        const orderedCards = [...orderedPinned, ...orderedNormal];
         orderedCards.forEach(card => root.appendChild(card));
         cardsAppended = orderedCards.length;
         const filterInfo = getHabitFilterByKey(activeHabitFilter);
@@ -5739,6 +5762,18 @@
       const tbody = habitGardenersBody;
       const empty = habitGardenersEmpty;
       if (!tbody) return;
+      if (!shouldRenderRankings()) {
+        tbody.innerHTML = '';
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 4;
+        cell.className = 'miniInfo';
+        cell.textContent = 'Les classements sont désactivés pour ce profil.';
+        row.append(cell);
+        tbody.append(row);
+        if (empty) empty.classList.add('hide');
+        return;
+      }
       tbody.innerHTML = '';
       if (!activeId) {
         if (empty) empty.classList.remove('hide');
@@ -5799,24 +5834,6 @@
       if (!btn) return;
       switchViews(btn, 'data-tab', 'detail');
     }
-    function cleanupPostponedHabits(todayKey) {
-      const map = getPostponedHabitsMap();
-      if (!todayKey || !map || !Object.keys(map).length) return;
-      const next = {};
-      let changed = false;
-      Object.entries(map).forEach(([habitId, key]) => {
-        if (!key) return;
-        if (key >= todayKey) {
-          next[habitId] = key;
-        } else {
-          changed = true;
-        }
-      });
-      if (changed) {
-        persistHabitProfileFields({ postponedHabits: next }).catch(() => { });
-      }
-    }
-
     /* ===== Calendriers ===== */
     /* ===== Navigation vues ===== */
     function showHome() { hideAll(); $("#home").classList.add('active'); $("#daysWrap").classList.remove('hide') }
@@ -6295,10 +6312,9 @@
       const spaceLabelField = $("#spaceLabelField");
       const spacePseudoField = $("#spacePseudoField");
       const pseudoInput = $("#paramSpacePseudo");
-      const visibilityField = $("#spaceVisibilityField");
-      const visibilitySelect = $("#paramVisibility");
-      const visibilityHint = $("#spaceVisibilityHint");
-      const changePseudoBtn = $("#changePseudoBtn");
+      const profileModeField = $("#spaceProfileModeField");
+      const profileModeSelect = $("#paramProfileMode");
+      const profileModeHint = $("#profileModeHint");
       const deleteAccountBtn = $("#deleteAccountBtn");
       const personalDeleteHint = $("#personalDeleteHint");
       const introField = $("#spaceIntroField");
@@ -6318,8 +6334,8 @@
             : "Le pseudo du jardin est utilisé pour partager l’espace.";
         }
       }
-      if (visibilityField) {
-        visibilityField.classList.toggle('hide', !isPersonal);
+      if (profileModeField) {
+        profileModeField.classList.toggle('hide', !isPersonal);
       }
       if (introField) {
         introField.classList.toggle('hide', isPersonal);
@@ -6336,33 +6352,28 @@
           pseudoInput.value = '';
         }
       }
-      if (visibilitySelect) {
-        visibilitySelect.value = currentProfile?.visibility || DEFAULT_VISIBILITY;
-      }
-      const refreshSpaceVisibilityHint = () => {
-        if (!visibilityHint || !visibilitySelect) return;
-        visibilityHint.textContent = describeVisibility(visibilitySelect.value);
-      };
-      refreshSpaceVisibilityHint();
-      if (visibilitySelect && !visibilitySelect.dataset.bound) {
-        visibilitySelect.addEventListener('change', async () => {
-          await updateUserVisibility(visibilitySelect.value);
-          refreshSpaceVisibilityHint();
-        });
-        visibilitySelect.dataset.bound = '1';
-      }
-      if (changePseudoBtn && !changePseudoBtn.dataset.bound) {
-        changePseudoBtn.addEventListener('click', async () => {
-          changePseudoBtn.disabled = true;
-          await regenerateProfilePseudo();
-          changePseudoBtn.disabled = false;
-          setupSpaceInfo();
-          updSpaceHeader();
-        });
-        changePseudoBtn.dataset.bound = '1';
-      }
-      if (changePseudoBtn) {
-        changePseudoBtn.classList.toggle('hide', !isPersonal);
+      if (profileModeSelect) {
+        const localOption = profileModeSelect.querySelector('option[value="local"]');
+        if (localOption) {
+          const hideLocal = !!currentProfile?.email;
+          localOption.hidden = hideLocal;
+          localOption.disabled = hideLocal;
+        }
+        const refreshProfileModeHint = () => {
+          if (!profileModeSelect || !profileModeHint) return;
+          const info = PROFILE_MODE_INFO[profileModeSelect.value] || PROFILE_MODE_INFO[getProfileMode()];
+          profileModeHint.textContent = info?.summary || '';
+        };
+        profileModeSelect.value = getProfileMode();
+        refreshProfileModeHint();
+        if (!profileModeSelect.dataset.bound) {
+          profileModeSelect.addEventListener('change', () => {
+            const mode = profileModeSelect.value;
+            updateProfileMode(mode);
+            refreshProfileModeHint();
+          });
+          profileModeSelect.dataset.bound = '1';
+        }
       }
       if (deleteAccountBtn) {
         deleteAccountBtn.classList.toggle('hide', !(isOwner && isPersonal));
@@ -6574,6 +6585,16 @@
       const root = $("#spaceRank");
       root.innerHTML = '';
       if (!spaceId) return;
+      if (!shouldRenderRankings()) {
+        if (root) {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'miniInfo';
+          placeholder.textContent = 'Les classements sont désactivés pour ce profil.';
+          root.appendChild(placeholder);
+        }
+        renderProfileStats();
+        return;
+      }
       const range = resolvePeriodRange(sPeriod);
       const records = getPersonalActivityRecords(DEFAULT_GARDENER_WINDOW_DAYS);
       const filtered = records.filter(rec => {
@@ -6809,7 +6830,7 @@
     $("#backFromSpace").onclick = showHome;
 
     /* Modales */
-    const mAdd = $("#modalAdd"), mHabit = $("#modalHabit"), mInvite = $("#modalInvite"), mGarden = $("#modalGarden"), mJoin = $("#modalJoin");
+    const mAdd = $("#modalAdd"), mHabit = $("#modalHabit"), mInvite = $("#modalInvite"), mGarden = $("#modalGarden"), mJoin = $("#modalJoin"), mProfileSetup = $("#modalProfileSetup");
     const joinNameInput = $("#joinName");
     const joinPseudoInput = $("#joinPseudo");
     const joinStatus = $("#joinStatus");
@@ -6817,8 +6838,15 @@
     const inviteGardenPseudo = $("#inviteGardenPseudo");
     const habitBackBtn = mHabit?.querySelector('.menu-back');
     const closeHabitBtn = $("#closeHabit");
-    const changePseudoBtn = $("#changePseudoBtn");
     const deleteAccountBtn = $("#deleteAccountBtn");
+    const profileModeSelector = $("#profileModeSelector");
+    const profileNameField = $("#profileNameField");
+    const profileNameInput = $("#profileNameInput");
+    const profilePseudoField = $("#profilePseudoField");
+    const profilePseudoInput = $("#profilePseudoInput");
+    const profilePseudoRefresh = $("#profilePseudoRefresh");
+    const profileModeSetupHint = $("#profileModeSetupHint");
+    const profileSetupContinue = $("#profileSetupContinue");
     let habitModalContext = 'menu';
     const open = m => m.classList.add('on'), close = m => m.classList.remove('on');
     let spacesInitialized = false;
@@ -7054,6 +7082,7 @@
     }
     async function createPersonalSpace() {
       if (!currentProfile) return;
+      await ensureProfileSetup();
       await ensureProfilePseudo();
       const normalizedEmail = normalizeEmail(currentProfile.email);
       const ownerId = currentProfile.uid || '';
@@ -7102,20 +7131,28 @@
         editorRights: 'admin',
         memberSettings,
         pseudo,
-        pseudoNormalized: normalizeSpacePseudo(pseudo),
-        visibility: currentProfile.visibility || DEFAULT_VISIBILITY
+        pseudoNormalized: normalizeSpacePseudo(pseudo)
       };
       SPACES[id] = spaceEntry;
       spaceId = id;
       userName = ownerLabel;
       setLastMemberName(ownerLabel);
       allowedSpaces = [...new Set([...allowedSpaces, id])];
+      const defaultHabitSource = LIBRARY_HABITS.find(habit => String(habit.id) === '1' || habit.id === 1);
+      let defaultHabit = null;
+      if (defaultHabitSource) {
+        defaultHabit = buildHabitPayload(spaceEntry, defaultHabitSource);
+        spaceEntry.ch.push(defaultHabit);
+      }
       const payload = {
         ...spaceEntry,
         createdBy: normalizedEmail || null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
       await persistSpaceDoc(id, payload);
+      if (defaultHabit) {
+        await persistHabit(id, defaultHabit);
+      }
       await loadHabitsForSpace(id);
       await loadActivitiesForSpace(id);
       spacesInitialized = true;
@@ -7123,9 +7160,141 @@
       renderCards();
       maybeTogglePrivateAdd();
       updateAddModalOptions();
-      showToast('Ton espace individuel est prêt !', { type: 'success' });
+      if (pendingHabitModalAfterSetup) {
+        pendingHabitModalAfterSetup = false;
+        setTimeout(() => openHabitFlow('creation'), 32);
+      }
       showHome();
-      openHabitFlow('creation');
+    }
+    let profileSetupPromise = null;
+    let profileSetupResolver = null;
+
+    function shouldPromptProfileSetup() {
+      const seen = safeStorageGet(STORAGE_PROFILE_SETUP_KEY);
+      return seen !== '1';
+    }
+    function markProfileSetupDone() {
+      safeStorageSet(STORAGE_PROFILE_SETUP_KEY, '1');
+    }
+    function updateProfileSetupLocalOption() {
+      if (!profileModeSelector) return;
+      const localOption = profileModeSelector.querySelector('option[value="local"]');
+      if (!localOption) return;
+      const hideLocal = !!currentProfile?.email;
+      localOption.hidden = hideLocal;
+      localOption.disabled = hideLocal;
+    }
+    function updateProfileSetupFields() {
+      if (!profileModeSelector) return;
+      const mode = profileModeSelector.value || getProfileMode();
+      const showExtras = mode !== 'local';
+      if (profileNameField) profileNameField.classList.toggle('hide', !showExtras);
+      if (profilePseudoField) profilePseudoField.classList.toggle('hide', !showExtras);
+      if (profileModeSetupHint) {
+        const info = PROFILE_MODE_INFO[mode] || PROFILE_MODE_INFO[getProfileMode()];
+        profileModeSetupHint.textContent = info?.summary || '';
+      }
+    }
+    async function ensureProfilePseudoInput(force = false) {
+      if (!profilePseudoInput) return '';
+      let candidate = '';
+      if (!force) {
+        candidate = (profilePseudoInput.value || '').trim() || (currentProfile?.pseudo || '').trim();
+      }
+      if (!candidate || force) {
+        candidate = await generateUniquePseudo();
+      }
+      if (candidate) {
+        profilePseudoInput.value = candidate;
+      }
+      return candidate;
+    }
+    async function openProfileSetupModal() {
+      updateProfileSetupLocalOption();
+      if (profileModeSelector) {
+        profileModeSelector.value = getProfileMode();
+      }
+      if (profileNameInput) {
+        profileNameInput.value = currentProfile?.name || '';
+      }
+      updateProfileSetupFields();
+      await ensureProfilePseudoInput();
+      if (mProfileSetup) {
+        open(mProfileSetup);
+      }
+    }
+    function closeProfileSetupModal() {
+      if (mProfileSetup) {
+        close(mProfileSetup);
+      }
+    }
+    let pendingHabitModalAfterSetup = false;
+
+    async function ensureProfileSetup() {
+      if (!shouldPromptProfileSetup()) return;
+      if (!mProfileSetup || !profileModeSelector) return;
+      if (profileSetupPromise) return profileSetupPromise;
+      profileSetupPromise = new Promise(resolve => {
+        profileSetupResolver = resolve;
+        openProfileSetupModal().catch(err => console.warn('openProfileSetupModal', err));
+      });
+      return profileSetupPromise;
+    }
+    function finalizeProfileSetup() {
+      markProfileSetupDone();
+      pendingHabitModalAfterSetup = true;
+      if (profileSetupResolver) {
+        profileSetupResolver();
+        profileSetupResolver = null;
+      }
+      profileSetupPromise = null;
+      closeProfileSetupModal();
+    }
+    if (profileModeSelector && !profileModeSelector.dataset.bound) {
+      profileModeSelector.addEventListener('change', updateProfileSetupFields);
+      profileModeSelector.dataset.bound = '1';
+    }
+    if (profilePseudoRefresh) {
+      profilePseudoRefresh.addEventListener('click', async () => {
+        profilePseudoRefresh.disabled = true;
+        try {
+          const candidate = await ensureProfilePseudoInput(true);
+          if (candidate) {
+            persistProfile({ pseudo: candidate });
+          }
+        } finally {
+          profilePseudoRefresh.disabled = false;
+        }
+      });
+    }
+    if (profileSetupContinue) {
+      profileSetupContinue.addEventListener('click', async () => {
+        if (!profileModeSelector) return;
+        const selectedMode = profileModeSelector.value || DEFAULT_PROFILE_MODE;
+        const nameValue = (profileNameInput?.value || '').trim();
+        const pseudoValue = (profilePseudoField ? (profilePseudoInput?.value || '').trim() : '');
+        try {
+          if (nameValue) {
+            persistProfile({ name: nameValue });
+          }
+          let actualPseudo = pseudoValue;
+          if (!actualPseudo) {
+            actualPseudo = await ensureProfilePseudoInput(true);
+          }
+          if (actualPseudo) {
+            if (selectedMode !== 'local') {
+              await updateUserPseudo(actualPseudo);
+            } else {
+              persistProfile({ pseudo: actualPseudo });
+            }
+          }
+          await updateProfileMode(selectedMode);
+          finalizeProfileSetup();
+        } catch (err) {
+          console.warn('profile setup', err);
+          showToast('Impossible de sauvegarder ton profil pour l’instant.', { type: 'error' });
+        }
+      });
     }
     const installPromptBtn = $("#installPromptBtn");
     const installPromptClose = $("#installPromptClose");
@@ -7812,10 +7981,12 @@
           persistPromises.push(persistHabit(spaceId, payload));
         });
         if (!persistPromises.length) return;
+        const addedCount = persistPromises.length;
         await Promise.all(persistPromises);
         renderCards();
         renderHabitSuggestions.disablePreselect = true;
         renderHabitSuggestions(contexts.slice(), needs.slice(), modeFilter);
+        showToast(`${addedCount} habitude${addedCount > 1 ? 's' : ''} ajoutée${addedCount > 1 ? 's' : ''}`);
       });
     }
 
@@ -8090,7 +8261,7 @@
       const forgottenHabits = Array.isArray(remoteProfile?.forgottenHabits) ? remoteProfile?.forgottenHabits : [];
       const showFriendBadges = remoteProfile?.showFriendBadges !== false;
       const resolvedPseudo = remoteProfile?.pseudo || currentProfile?.pseudo || '';
-      const resolvedVisibility = remoteProfile?.visibility || currentProfile?.visibility || DEFAULT_VISIBILITY;
+      const resolvedMode = remoteProfile?.profileMode || currentProfile?.profileMode || DEFAULT_PROFILE_MODE;
       const profile = {
         uid: user.uid,
         email,
@@ -8102,7 +8273,7 @@
         forgottenHabits,
         showFriendBadges,
         pseudo: resolvedPseudo,
-        visibility: resolvedVisibility
+        profileMode: resolvedMode
       };
       persistProfile(profile);
       await persistUserProfile(profile);
@@ -8121,7 +8292,7 @@
         userName = currentProfile?.name || name;
         setLastMemberName(userName);
         updateAddModalOptions();
-        if (allowedSpaces.length === 0) { await createPersonalSpace(); return; }
+        if (allowedSpaces.length === 0) { await ensureProfileSetup(); await createPersonalSpace(); return; }
         updAll();
         showHome();
         triggerPersonalActivityRefresh();
@@ -8135,7 +8306,7 @@
         } finally {
           hideLoaderOverlay();
         }
-        if (allowedSpaces.length === 0) { await createPersonalSpace(); return; }
+        if (allowedSpaces.length === 0) { await ensureProfileSetup(); await createPersonalSpace(); return; }
         updAll();
         showHome();
         triggerPersonalActivityRefresh();
